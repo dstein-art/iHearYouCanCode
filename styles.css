@@ -347,22 +347,106 @@ nav .sep { color: var(--border); margin: 0 2px; user-select: none; }
 
 /* ── Footer ── */
 footer {
+  background: var(--surface);
   border-top: 1px solid var(--border);
-  padding: 28px 32px;
+  padding: 40px 32px 36px;
+  margin-top: 16px;
+}
+
+.footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.footer-top {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+}
+
+.footer-brand-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-brand {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.footer-brand-accent { color: var(--accent); }
+.footer-brand-dim    { color: var(--muted); font-weight: 500; }
+
+.footer-brand:hover .footer-brand-accent { color: #005fa3; }
+
+.footer-copyright {
   font-size: 12px;
   color: var(--muted);
+  margin: 0;
+}
+
+.footer-contact {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+  align-self: flex-start;
+}
+
+.footer-contact:hover { color: var(--accent); }
+
+.footer-production {
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-credit {
+  font-size: 12px;
+  font-style: italic;
+  color: #8888a0;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 0;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0;
+  max-width: 720px;
+}
+
+.footer-links .sep {
+  margin: 0 0.5em;
+  color: #c8c8d4;
+  user-select: none;
 }
 
 footer a {
   color: var(--accent);
   text-decoration: none;
+  transition: color .15s;
 }
-footer a:hover { text-decoration: underline; }
+
+footer a:hover { color: #005fa3; text-decoration: underline; }
 
 /* ── Mobile ── */
 @media (max-width: 900px) {
@@ -373,4 +457,7 @@ footer a:hover { text-decoration: underline; }
   .col-grid { grid-template-columns: 1fr; }
   .hero-inner { flex-direction: column; align-items: flex-start; }
   .hero-callout { flex: 0 0 auto; width: 100%; }
+  footer { padding: 32px 20px 28px; }
+  .footer-top { flex-direction: column; align-items: flex-start; }
+  .footer-contact { align-self: flex-start; }
 }
