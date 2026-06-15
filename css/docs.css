@@ -197,6 +197,8 @@ body.docs-page hr {
 
 /* ── Live editor + preview ── */
 .example-row {
+  --canvas-w: 600;
+  --canvas-h: 320;
   display: flex;
   gap: 20px;
   align-items: flex-start;
@@ -246,9 +248,9 @@ body.docs-page hr {
 }
 
 .example-preview {
-  flex: 0 0 340px;
-  width: 340px;
-  height: 232px;
+  flex: 0 0 calc(var(--canvas-w) * 1px);
+  width: calc(var(--canvas-w) * 1px);
+  height: calc(var(--canvas-h) * 1px);
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -256,10 +258,8 @@ body.docs-page hr {
 }
 
 .example-preview iframe {
-  width: 600px;
-  height: 320px;
-  transform: scale(0.567, 0.725);
-  transform-origin: top left;
+  width: calc(var(--canvas-w) * 1px);
+  height: calc(var(--canvas-h) * 1px);
   border: none;
   display: block;
 }
@@ -274,11 +274,8 @@ body.docs-page footer {
   .example-row { flex-direction: column; }
   .example-preview {
     flex: 0 0 auto;
-    width: 100%;
-    max-width: 400px;
-    height: 260px;
+    max-width: 100%;
   }
-  .example-preview iframe { transform: scale(0.67, 0.81); }
 }
 
 @media (max-width: 768px) {

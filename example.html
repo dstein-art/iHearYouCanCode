@@ -15,7 +15,8 @@
 <body>
 <script>
 // Live preview runner — same pattern as procontrols.org/docs/example.html
-const [W, H] = [600, 320];
+let W = 600;
+let H = 320;
 let _inst = null;
 
 const P5_HOOKS = [
@@ -87,7 +88,11 @@ function _runFullSketch(code) {
 }
 
 window.addEventListener('message', (e) => {
-  if (e.data && e.data.type === 'run') runCode(e.data.code);
+  if (e.data && e.data.type === 'run') {
+    if (e.data.width) W = e.data.width;
+    if (e.data.height) H = e.data.height;
+    runCode(e.data.code);
+  }
 });
 </script>
 </body>

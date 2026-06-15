@@ -64,20 +64,21 @@
 <span class="kw">&lt;script</span> src=<span class="str">"sketch.js"</span><span class="kw">&gt;&lt;/script&gt;</span></code></pre>
 
   <div class="note">
-    <strong>Sections 2</strong> needs only p5.js and p5.sound. <strong>Section 3</strong> adds ProControls
+    <strong>Sections 2–3</strong> need only p5.js and p5.sound. <strong>Section 4</strong> adds ProControls
     for hardware-style UI — see the
     <a href="https://procontrols.org/docs/gettingStarted.html" target="_blank" rel="noopener">ProControls docs</a>.
   </div>
 
   <h2>2. Write your first sketch</h2>
   <p class="desc">
-    To test out that P5 Sound is working, create a <code>p5.Oscillator</code> in <code>setup()</code>, then set the amplitude and frequency, and call 
-    <code>osc.start()</code> to start the oscillator.
+    Create a <code>p5.Oscillator</code> in <code>setup()</code>, then call <code>userStartAudio()</code> and
+    <code>osc.start()</code> in <code>mousePressed()</code> when the user clicks the canvas. Edit the code
+    below — the preview updates as you type.
   </p>
 
   <div class="example-row">
     <div class="live-editor">
-      <div class="live-hint"><a href="https://editor.p5js.org/des8963/sketches/cICgjdSPc" target="_blank" rel="noopener">Open in p5.js Editor</a></div>
+      <div class="live-hint">editable — changes update the preview</div>
       <textarea class="live-code" spellcheck="false">var osc;
 
 function setup() {
@@ -85,22 +86,91 @@ function setup() {
   osc = new p5.Oscillator('sine');
   osc.amp(0.5);
   osc.freq(440);
-  osc.start();
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!osc.started) {osc.start()} else {osc.stop()};
 }
 
 function draw() {
   background(30);
+  fill(136, 170, 204); textAlign(CENTER, CENTER); textSize(14);
+  if (!osc.started) {
+    text('Click to start', width / 2, height / 2);
+  }
 }</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="Click to start preview"></iframe>
     </div>
   </div>
 
   <h3>Audio context</h3>
   <p class="desc">
-    In future tutorials, you will learn that browsers block audio until the user clicks. The above example works in the p5 
-    editor because in order for a sketch to run in the p5 editor, you have already interacted by clicking the play button to start the sketch.
+    Browsers block audio until the user clicks. <code>userStartAudio()</code> in <code>mousePressed()</code>
+    unlocks the Web Audio context — use <code>osc.started</code> to check whether the oscillator is running.
   </p>
 
-  <h2>3. Modify your sketch to use ProControls</h2>
+  <h2>3. Modify your sketch to control frequency and volume</h2>
+  <p class="desc">
+    Build on the sketch above: map <code>mouseX</code> to pitch and <code>mouseY</code> to volume in
+    <code>mouseMoved()</code>. Click toggles the oscillator on and off.
+  </p>
+
+  <div class="example-row">
+    <div class="live-editor">
+      <div class="live-hint">editable — changes update the preview</div>
+      <textarea class="live-code" spellcheck="false">var osc;
+
+function setup() {
+  createCanvas(600, 320);
+  osc = new p5.Oscillator('sine');
+  osc.amp(0);
+  osc.freq(440);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!osc.started) { osc.start(); } else { osc.stop(); }
+  updateSound();
+}
+
+function mouseMoved() {
+  updateSound();
+}
+
+function updateSound() {
+  if (!osc.started) return;
+
+  let freq = map(mouseX, 0, width, 110, 880);
+  let vol = map(mouseY, 0, height, 1, 0);
+  osc.freq(freq);
+  osc.amp(vol, 0.05);
+}
+
+function updateText() {
+    // Text formatting for the Click to Start/Stop Message
+  fill(136, 170, 204); textAlign(CENTER, CENTER);  textSize(14);
+
+  if (!osc.started) {
+    text('Click to start — move mouse for pitch (↔) and volume (↕)', width / 2, height / 2);
+  } else {
+    text('Click to stop - move mouse for pitch (↔) and volume (↕)', width / 2, height / 2);
+  }
+}
+
+function draw() {
+  background(30);
+  updateText();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="Live sketch preview"></iframe>
+    </div>
+  </div>
+
+  <h2>4. Modify your sketch to use ProControls</h2>
   <p class="desc">
     Swap mouse mapping for an <code>XYPad</code> — horizontal for frequency, vertical for volume —
     plus a <code>Selector</code> to step through waveform types. Set <code>ControlStyle</code> before
@@ -108,32 +178,43 @@ function draw() {
     <code>onChange</code> to update the oscillator.
   </p>
 
-  <div class="example-row" data-canvas-w="250" data-canvas-h="250">
+  <div class="example-row">
     <div class="live-editor">
       <div class="live-hint">editable — changes update the preview</div>
-      <textarea class="live-code" spellcheck="false">
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'black';
+
 var osc;
+var waveOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
 function setup() {
-  createCanvas(300, 300);
-  osc = new p5.Oscillator('square');
+  createCanvas(600, 320);
+  osc = new p5.Oscillator('sine');
   osc.amp(0);
   osc.freq(440);
 
   new XYPad({
     x: 20, y: 20,
     width: 200, height: 200,
-    minX: 50, maxX: 170,
+    minX: 110, maxX: 880,
     minY: 0, maxY: 1,
-    springBack: true,
-    springDuration: 20.0,
-    valueX: 110, valueY: 0,
+    valueX: 440, valueY: 0,
     label: 'FREQ / VOL',
     onChange: ({ x, y }) => {
       userStartAudio();
       if (!osc.started) osc.start();
       osc.freq(x);
       osc.amp(y, 0.05);
+    },
+  });
+
+  new Selector({
+    x: 240, y: 20,
+    options: waveOptions,
+    label: 'WAVE',
+    onChange: ({ label }) => {
+      userStartAudio();
+      if (!osc.started) osc.start();
+      osc.setType(label);
     },
   });
 }
@@ -143,7 +224,105 @@ function draw() {
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="ProControls XYPad preview"></iframe>
+      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="ProControls XYPad preview"></iframe>
+    </div>
+  </div>
+
+  <h2>5. Modify your sketch to control ADSR and oscillators</h2>
+  <p class="desc">
+    Connect a <code>p5.Envelope</code> to the oscillator with <code>osc.amp(env)</code>. Use a second
+    <code>MultiSlider</code> for attack, decay, sustain, and release — wire it to
+    <code>env.setADSR()</code> and an <code>ADSRDisplay</code> panel so the envelope shape updates live.
+    Click the canvas to trigger <code>env.play(osc)</code>.
+  </p>
+
+  <div class="example-row">
+    <div class="live-editor">
+      <div class="live-hint">editable — changes update the preview</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'black';
+
+var osc, env, adsr;
+var waveOptions = ['sine', 'square', 'sawtooth', 'triangle'];
+
+function setup() {
+  createCanvas(600, 320);
+
+  osc = new p5.Oscillator('sine');
+  osc.freq(440);
+  osc.start();
+
+  env = new p5.Envelope();
+  env.setADSR(0.1, 0.2, 0.5, 0.3);
+  env.setRange(0, 0.8);
+  osc.amp(env);
+
+  adsr = new ADSRDisplay({
+    x: 300, y: 20,
+    width: 280, height: 130,
+    attack: 0.1, decay: 0.2, sustain: 0.5, release: 0.3,
+    label: 'ENV',
+  });
+
+  new MultiSlider({
+    x: 20, y: 20,
+    height: 130,
+    sliders: {
+      'VOL':  { value: 0.8, min: 0, max: 1,   width: 70, readout: 'db' },
+      'FREQ': { value: 440, min: 110, max: 880, width: 70, readout: 'raw', decimals: 0 },
+    },
+    onChange: (v) => {
+      userStartAudio();
+      env.setRange(0, v.VOL);
+      osc.freq(v.FREQ);
+    },
+  });
+
+  new Selector({
+    x: 180, y: 20,
+    options: waveOptions,
+    label: 'WAVE',
+    onChange: ({ label }) => {
+      userStartAudio();
+      osc.setType(label);
+    },
+  });
+
+  new MultiSlider({
+    x: 20, y: 165,
+    height: 130,
+    sliders: {
+      'A': { value: 0.1, min: 0, max: 2, width: 60, readout: 'raw', decimals: 2 },
+      'D': { value: 0.2, min: 0, max: 2, width: 60, readout: 'raw', decimals: 2 },
+      'S': { value: 0.5, min: 0, max: 1, width: 60, readout: 'raw', decimals: 2 },
+      'R': { value: 0.3, min: 0, max: 2, width: 60, readout: 'raw', decimals: 2 },
+    },
+    onChange: (v) => {
+      userStartAudio();
+      env.setADSR(v.A, v.D, v.S, v.R);
+      adsr.attack = v.A;
+      adsr.decay = v.D;
+      adsr.sustain = v.S;
+      adsr.release = v.R;
+    },
+  });
+}
+
+function mousePressed() {
+  userStartAudio();
+  env.play(osc, 0, 0.5);
+}
+
+function draw() {
+  proControlBackground();
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(12);
+  text('Click canvas to play a note', width / 2, height - 14);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="ADSR oscillator preview"></iframe>
     </div>
   </div>
 
