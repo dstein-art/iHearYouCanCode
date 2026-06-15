@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { overflow: hidden; width: 100%; height: 100%; background: #1a1a22; }
+    canvas { display: block; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dstein-art/proControls4p5js@v0.8.1/ProControls.js"></script>
+</head>
+<body>
+<script>
+// Live preview runner — same pattern as procontrols.org/docs/example.html
+const [W, H] = [600, 320];
+let _inst = null;
+
+const P5_HOOKS = [
+  'preload', 'setup', 'draw',
+  'mousePressed', 'mouseReleased', 'mouseClicked', 'mouseMoved', 'mouseDragged', 'mouseWheel',
+  'doubleClicked',
+  'keyPressed', 'keyReleased', 'keyTyped',
+  'touchStarted', 'touchMoved', 'touchEnded',
+  'windowResized',
+];
+
+function runCode(code) {
+  if (_inst) {
+    _inst.remove();
+    _inst = null;
+  }
+
+  if (typeof proControlFullReset === 'function') proControlFullReset();
+  else if (typeof proControlReset === 'function') proControlReset();
+
+  if (/\bfunction\s+setup\b/.test(code)) {
+    _runFullSketch(code);
+  } else {
+    _runSetupOnly(code);
+  }
+
+  _inst = new p5();
+}
+
+function _runSetupOnly(code) {
+  window.setup = function () {
+    createCanvas(W, H);
+    ControlStyle = 'black';
+    try { (new Function(code))(); }
+    catch (e) { console.warn('[example]', e.message); }
+  };
+
+  window.draw = function () {
+    if (typeof proControlBackground === 'function') proControlBackground();
+    else background(30);
+  };
+}
+
+function _runFullSketch(code) {
+  P5_HOOKS.forEach((name) => { window[name] = undefined; });
+
+  try { (0, eval)(code); }
+  catch (e) { console.warn('[example]', e.message); return; }
+
+  const userSetup = (typeof window.setup === 'function') ? window.setup : null;
+  const userDraw  = (typeof window.draw  === 'function') ? window.draw  : null;
+
+  window.setup = function () {
+    if (userSetup) {
+      try { userSetup(); }
+      catch (e) { console.warn('[example setup]', e.message); }
+    }
+    if (!document.querySelector('canvas')) createCanvas(W, H);
+  };
+
+  window.draw = function () {
+    push();
+    try {
+      if (userDraw) userDraw();
+      else if (typeof proControlBackground === 'function') proControlBackground();
+    } catch (e) { console.warn('[example draw]', e.message); }
+    pop();
+  };
+}
+
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'run') runCode(e.data.code);
+});
+</script>
+</body>
+</html>

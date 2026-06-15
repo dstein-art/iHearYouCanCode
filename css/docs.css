@@ -1,0 +1,301 @@
+/* Docs pages — styled like procontrols.org/docs */
+
+body.docs-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+body.docs-page nav,
+body.docs-page .hero-compact {
+  width: 100%;
+}
+
+/* ── Compact hero ── */
+.hero-compact {
+  background: linear-gradient(135deg, #0f1923 0%, #1a2840 50%, #0f2030 100%);
+  padding: 20px 32px 18px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-compact::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.hero-compact::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  width: 400px;
+  height: 200px;
+  background: radial-gradient(ellipse, #0077cc20 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-compact-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hero-compact-left {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-compact h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+
+.hero-compact h1 .accent { color: #00aaff; }
+.hero-compact h1 .dim    { color: #6699bb; font-weight: 400; }
+
+.hero-compact-eyebrow {
+  font-size: 12px;
+  color: #6688aa;
+  margin-top: 4px;
+  letter-spacing: .04em;
+}
+
+.hero-compact-sub {
+  font-size: 13px;
+  color: #6688aa;
+}
+
+.hero-compact-link {
+  font-size: 12px;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid #0077cc66;
+  color: #66bbff;
+  background: #0077cc22;
+  text-decoration: none;
+  transition: background .15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.hero-compact-link:hover { background: #0077cc44; }
+
+/* ── Page layout ── */
+body.docs-page .page {
+  width: 100%;
+  max-width: 1280px;
+  padding: 52px 32px 100px;
+}
+
+body.docs-page .page h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 44px 0 6px;
+}
+
+body.docs-page .page h2:first-child { margin-top: 0; }
+
+body.docs-page .page h3 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #9999b0;
+  margin: 32px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+body.docs-page .desc {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+/* ── Code blocks ── */
+body.docs-page pre {
+  background: var(--code-bg);
+  border: 1px solid #2a2a38;
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  font: 13px/1.65 'Fira Code', 'Cascadia Code', monospace;
+  overflow-x: auto;
+  margin: 0 0 4px;
+  color: var(--code-text);
+}
+
+body.docs-page code {
+  font: 13px/1 'Fira Code', 'Cascadia Code', monospace;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--accent);
+}
+
+body.docs-page pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+body.docs-page .kw   { color: #c792ea; }
+body.docs-page .fn   { color: #82aaff; }
+body.docs-page .str  { color: #c3e88d; }
+body.docs-page .num  { color: #f78c6c; }
+body.docs-page .cmt  { color: #546e7a; font-style: italic; }
+body.docs-page .prop { color: #89ddff; }
+
+/* ── Callouts ── */
+body.docs-page .note {
+  background: #0077cc0a;
+  border-left: 3px solid var(--accent);
+  padding: 11px 16px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 14px;
+  color: #446688;
+  margin: 16px 0 0;
+  line-height: 1.65;
+}
+
+body.docs-page .note strong { color: var(--accent); }
+
+body.docs-page .note a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+body.docs-page .note a:hover { text-decoration: underline; }
+
+body.docs-page hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+/* ── Live editor + preview ── */
+.example-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin: 10px 0 0;
+}
+
+.live-editor {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.live-hint {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: #0077cc0d;
+  border: 1px solid #0077cc33;
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 4px 10px;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.live-code {
+  background: var(--code-bg);
+  border: 1px solid #2a2a38;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 18px 20px;
+  font: 13px/1.65 'Fira Code', 'Cascadia Code', monospace;
+  color: var(--code-text);
+  resize: vertical;
+  min-height: 280px;
+  width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+  field-sizing: content;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.live-code:focus {
+  border-color: #0077cc66;
+}
+
+.example-preview {
+  flex: 0 0 340px;
+  width: 340px;
+  height: 232px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.example-preview iframe {
+  width: 600px;
+  height: 320px;
+  transform: scale(0.567, 0.725);
+  transform-origin: top left;
+  border: none;
+  display: block;
+}
+
+/* ── Docs footer spacing ── */
+body.docs-page footer {
+  width: 100%;
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .example-row { flex-direction: column; }
+  .example-preview {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 400px;
+    height: 260px;
+  }
+  .example-preview iframe { transform: scale(0.67, 0.81); }
+}
+
+@media (max-width: 768px) {
+  .hero-compact-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .hero-compact-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-compact { padding: 18px 20px 16px; }
+  body.docs-page .page { padding: 40px 20px 72px; }
+}
