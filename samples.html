@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading &amp; Playing Sounds — iHearYouCanCode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/docs.css">
+</head>
+<body class="docs-page">
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" title="Home" style="padding:5px 8px;font-size:18px;line-height:1;display:flex;align-items:center;">
+    <span class="material-symbols-outlined" style="font-size:20px;">home</span>
+  </a>
+  <span class="sep">·</span>
+  <a href="#">About</a>
+  <span class="sep">·</span>
+  <a href="getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html" style="color:var(--accent);">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
+  <a href="#">Resources</a>
+  <span class="sep">·</span>
+  <a href="#">Community</a>
+  <span class="sep">·</span>
+  <a href="#" style="color:var(--accent2);">Get Involved ↗</a>
+</nav>
+
+<!-- ── Compact hero ── -->
+<div class="hero-compact">
+  <div class="hero-compact-inner">
+    <div class="hero-compact-left">
+      <div>
+        <h1><span class="accent">Loading</span> <span class="dim">&amp; Playing Sounds</span></h1>
+        <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
+      </div>
+      <span class="hero-compact-sub">Load audio files, play them on click, and control volume and speed</span>
+    </div>
+    <a href="https://p5js.org/reference/p5.sound/p5.SoundFile/" class="hero-compact-link" target="_blank" rel="noopener">↗ SoundFile Docs</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="note">
+    Haven't set things up yet? Do <a href="getting-started.html">Getting Started</a> first —
+    it shows you how to add p5.js and p5.sound.
+  </div>
+
+  <h2>1. Load a sound file</h2>
+  <p class="desc">
+    A <code>p5.SoundFile</code> holds audio loaded from a file — like an MP3 or WAV.
+    Loading takes time, so use <code>preload()</code> to fetch the file before
+    <code>setup()</code> runs. Call <code>loadSound()</code> with a path or URL.
+    Click the canvas to play it.
+  </p>
+  <p class="desc">
+    The examples below use a short sample hosted online. When you build your own sketch,
+    put audio files in your project folder and use a path like <code>'sounds/beat.mp3'</code>.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var roar;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  roar = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (roar.isLoaded()) {
+    roar.play();
+  }
+}
+
+function draw() {
+  background(30);
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  if (roar.isLoaded()) {
+    text('Click to play', width / 2, height / 2);
+  } else {
+    text('Loading…', width / 2, height / 2);
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Load and play preview"></iframe>
+    </div>
+  </div>
+
+  <h3>Loading takes time</h3>
+  <p class="desc">
+    Audio files don't appear instantly. <code>loadSound()</code> fetches the file in the background.
+    Use <code>isLoaded()</code> to check if it's ready before you call <code>play()</code>.
+    If you try to play too early, nothing happens.
+  </p>
+
+  <h2>2. Control volume and stop playback</h2>
+  <p class="desc">
+    Use <code>amp()</code> to set how loud the sound is — from <code>0</code> (silent) to
+    <code>1</code> (full volume). Move the mouse up and down while the sound plays.
+    Click to start; click again to <code>stop()</code> it.
+    <code>isPlaying()</code> tells you if the sound is going right now.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var roar;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  roar = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!roar.isLoaded()) return;
+  if (roar.isPlaying()) {
+    roar.stop();
+  } else {
+    roar.play();
+    updateVolume();
+  }
+}
+
+function mouseMoved() {
+  updateVolume();
+}
+
+function updateVolume() {
+  if (!roar.isPlaying()) return;
+  var vol = map(mouseY, 0, height, 1, 0);
+  roar.amp(vol, 0.05);
+}
+
+function draw() {
+  background(30);
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  if (roar.isPlaying()) {
+    text('Playing — move up/down for volume', width / 2, height / 2 - 8);
+    text('Click to stop', width / 2, height / 2 + 14);
+  } else {
+    text('Click to play', width / 2, height / 2);
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Volume control preview"></iframe>
+    </div>
+  </div>
+
+  <h2>3. Loop a sound</h2>
+  <p class="desc">
+    A <code>loop()</code> repeats a sound over and over — great for beats and background tracks.
+    Click to start looping; click again to <code>stop()</code>.
+    <code>isLooping()</code> tells you if the sound is set to loop.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var roar;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  roar = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!roar.isLoaded()) return;
+  if (roar.isPlaying()) {
+    roar.stop();
+  } else {
+    roar.loop();
+  }
+}
+
+function draw() {
+  background(30);
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  if (roar.isLooping()) {
+    text('Looping — click to stop', width / 2, height / 2);
+  } else {
+    text('Click to loop', width / 2, height / 2);
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Loop preview"></iframe>
+    </div>
+  </div>
+
+  <h2>4. Change playback speed</h2>
+  <p class="desc">
+    <code>rate()</code> changes how fast the sound plays. At <code>1</code> it sounds normal.
+    Higher than <code>1</code> is faster (and higher pitch). Lower than <code>1</code> is slower
+    (and lower pitch). Values below <code>0</code> play the sound backwards.
+    Move the mouse left and right to try different rates while the loop plays.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var roar;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  roar = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!roar.isLoaded()) return;
+  if (roar.isPlaying()) {
+    roar.stop();
+  } else {
+    roar.loop();
+    updateRate();
+  }
+}
+
+function mouseMoved() {
+  updateRate();
+}
+
+function updateRate() {
+  if (!roar.isPlaying()) return;
+  var r = map(mouseX, 0, width, 0.25, 2);
+  roar.rate(r);
+}
+
+function draw() {
+  background(30);
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  if (roar.isPlaying()) {
+    text('Looping — move left/right for speed', width / 2, height / 2 - 8);
+    text('rate: ' + roar.rate().toFixed(2), width / 2, height / 2 + 14);
+  } else {
+    text('Click to loop', width / 2, height / 2);
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Playback rate preview"></iframe>
+    </div>
+  </div>
+
+  <h2>5. Use ProControls for play and volume</h2>
+  <p class="desc">
+    Swap click-to-play for on-screen controls. An <code>IconButton</code> toggles play and stop.
+    A <code>MultiSlider</code> sets volume. Call <code>userStartAudio()</code> when the player
+    touches a control, and call <code>proControlBackground()</code> in <code>draw()</code>.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'black';
+
+var roar;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  roar = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+
+  new IconButton({
+    x: 20, y: 20,
+    icon: 'play_arrow',
+    label: 'PLAY',
+    onPress: () => {
+      userStartAudio();
+      if (!roar.isLoaded()) return;
+      if (roar.isPlaying()) {
+        roar.stop();
+      } else {
+        roar.play();
+      }
+    },
+  });
+
+  new MultiSlider({
+    x: 20, y: 80,
+    height: 130,
+    sliders: {
+      'VOL': { value: 0.8, min: 0, max: 1, width: 70, readout: 'db' },
+    },
+    onChange: (v) => {
+      userStartAudio();
+      if (roar.isLoaded()) roar.amp(v.VOL, 0.05);
+    },
+  });
+}
+
+function draw() {
+  proControlBackground();
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(12);
+  if (roar.isLoaded() && roar.isPlaying()) {
+    text('Playing', width / 2, height - 14);
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="ProControls sample preview"></iframe>
+    </div>
+  </div>
+
+  <h3>Handy SoundFile methods</h3>
+  <ul class="desc-list">
+    <li><code>play()</code> — play once from the start</li>
+    <li><code>loop()</code> — play on repeat</li>
+    <li><code>pause()</code> / <code>play()</code> — pause and resume from the same spot</li>
+    <li><code>stop()</code> — stop and reset to the beginning</li>
+    <li><code>duration()</code> — length of the file in seconds</li>
+    <li><code>currentTime()</code> — where the playhead is right now</li>
+    <li><code>jump(time)</code> — jump to a position in the file</li>
+    <li><code>setLoop(true/false)</code> — turn looping on or off</li>
+  </ul>
+  <p class="desc">
+    When you host your own files, you can pass several formats in an array —
+    <code>loadSound(['beat.mp3', 'beat.ogg'])</code> — and the browser picks one that works.
+    See the
+    <a href="https://p5js.org/reference/p5.sound/p5.SoundFile/" target="_blank" rel="noopener">p5.SoundFile reference</a>.
+  </p>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a href="index.html" class="footer-brand">
+          <span class="footer-brand-accent">iHearYou</span><span class="footer-brand-dim">CanCode</span>
+        </a>
+        <p class="footer-copyright">&copy; 2026 David Stein</p>
+      </div>
+      <a href="mailto:davidstein@nyu.edu" class="footer-contact">davidstein@nyu.edu</a>
+    </div>
+    <div id="footer-production" class="footer-production" hidden>
+      <p class="footer-credit"></p>
+      <p class="footer-links"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/live-editor.js"></script>
+
+<script>
+  fetch('https://davidstein.us/shared/footer.json')
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('footer-production');
+      el.querySelector('.footer-credit').textContent = `${data.credit}…`;
+
+      const linksEl = el.querySelector('.footer-links');
+      data.links.forEach((link, i) => {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'sep';
+          sep.textContent = '·';
+          linksEl.appendChild(sep);
+        }
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.textContent = link.label;
+        linksEl.appendChild(a);
+      });
+
+      el.hidden = false;
+    })
+    .catch(() => {});
+</script>
+
+</body>
+</html>

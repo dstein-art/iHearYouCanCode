@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Getting Started — iHearYouCanCode</title>
+  <title>Oscillators &amp; Synthesis — iHearYouCanCode</title>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/docs.css">
@@ -18,7 +18,13 @@
   <span class="sep">·</span>
   <a href="#">About</a>
   <span class="sep">·</span>
-  <a href="getting-started.html" style="color:var(--accent);">Getting Started</a>
+  <a href="getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="oscillators.html" style="color:var(--accent);">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html">Analysis</a>
   <span class="sep">·</span>
   <a href="#">Resources</a>
   <span class="sep">·</span>
@@ -32,10 +38,10 @@
   <div class="hero-compact-inner">
     <div class="hero-compact-left">
       <div>
-        <h1><span class="accent">Getting</span> <span class="dim">Started</span></h1>
+        <h1><span class="accent">Oscillators</span> <span class="dim">&amp; Synthesis</span></h1>
         <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
       </div>
-      <span class="hero-compact-sub">Set up p5.js and p5.sound — then make your first sound with the mouse</span>
+      <span class="hero-compact-sub">Make beeps, change how they sound, and play with on-screen controls</span>
     </div>
     <a href="https://p5js.org/reference/p5.sound/" class="hero-compact-link" target="_blank" rel="noopener">↗ p5.sound Docs</a>
   </div>
@@ -43,46 +49,26 @@
 
 <div class="page">
 
-  <h2>1. Add the script tags</h2>
-  <p class="desc">
-    Every exercise on this site runs in the browser. Add these lines to your HTML <code>&lt;head&gt;</code>.
-    Load p5.js first, then p5.sound.
-  </p>
-  <pre><code><span class="cmt">&lt;!-- Google icon font (optional — used by ProControls) --&gt;</span>
-<span class="kw">&lt;link</span> href=<span class="str">"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;display=block"</span> rel=<span class="str">"stylesheet"</span><span class="kw">&gt;</span>
-
-<span class="cmt">&lt;!-- p5.js --&gt;</span>
-<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/p5.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
-
-<span class="cmt">&lt;!-- p5.sound (requires p5.js above) --&gt;</span>
-<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
-
-<span class="cmt">&lt;!-- ProControls — needed from section 4 onward --&gt;</span>
-<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/gh/dstein-art/proControls4p5js@v0.8.1/ProControls.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
-
-<span class="cmt">&lt;!-- Your sketch --&gt;</span>
-<span class="kw">&lt;script</span> src=<span class="str">"sketch.js"</span><span class="kw">&gt;&lt;/script&gt;</span></code></pre>
-
   <div class="note">
-    <strong>Sections 2–3</strong> need only p5.js and p5.sound. <strong>Section 4</strong> adds ProControls
-    for hardware-style UI — see the
-    <a href="https://procontrols.org/docs/gettingStarted.html" target="_blank" rel="noopener">ProControls docs</a>.
+    Haven't set things up yet? Do <a href="getting-started.html">Getting Started</a> first —
+    it shows you how to add p5.js, p5.sound, and ProControls.
   </div>
 
-  <h2>2. Write your first sketch</h2>
+  <h2>1. Click to turn the sound on</h2>
   <p class="desc">
-    Create a <code>p5.Oscillator</code> in <code>setup()</code>, then call <code>userStartAudio()</code> and
-    <code>osc.start()</code> in <code>mousePressed()</code> when the user clicks the canvas. Edit the code
-    below — the preview updates as you type.
+    This sketch makes a tone you turn on and off by clicking the canvas.
+    On the first click, call <code>userStartAudio()</code> so the browser allows sound.
+    Then use <code>osc.start()</code> to play and <code>osc.stop()</code> to stop.
+    Try editing the code below — the preview updates as you type.
   </p>
 
-  <div class="example-row">
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
-      <div class="live-hint">editable — changes update the preview</div>
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
       <textarea class="live-code" spellcheck="false">var osc;
 
 function setup() {
-  createCanvas(600, 320);
+  createCanvas(300, 300);
   osc = new p5.Oscillator('sine');
   osc.amp(0.5);
   osc.freq(440);
@@ -102,29 +88,33 @@ function draw() {
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="Click to start preview"></iframe>
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Click to start preview"></iframe>
     </div>
   </div>
 
-  <h3>Audio context</h3>
+  <h3>Why do I need to click first?</h3>
   <p class="desc">
-    Browsers block audio until the user clicks. <code>userStartAudio()</code> in <code>mousePressed()</code>
-    unlocks the Web Audio context — use <code>osc.started</code> to check whether the oscillator is running.
+    Browsers won't play sound until you click something — it's a safety rule.
+    <code>userStartAudio()</code> in <code>mousePressed()</code> turns sound on.
+    <code>osc.started</code> tells you if the tone is playing: <code>true</code> means on, <code>false</code> means off.
   </p>
 
-  <h2>3. Modify your sketch to control frequency and volume</h2>
+  <h2>2. Use your mouse as a control</h2>
   <p class="desc">
-    Build on the sketch above: map <code>mouseX</code> to pitch and <code>mouseY</code> to volume in
-    <code>mouseMoved()</code>. Click toggles the oscillator on and off.
+    Now your mouse controls the sound while it's playing.
+    Move left and right to change pitch (how high or low).
+    Move up and down to change volume (how loud).
+    <code>map()</code> turns mouse position into numbers the oscillator can use.
+    Click still turns the sound on and off.
   </p>
 
-  <div class="example-row">
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
-      <div class="live-hint">editable — changes update the preview</div>
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
       <textarea class="live-code" spellcheck="false">var osc;
 
 function setup() {
-  createCanvas(600, 320);
+  createCanvas(300, 300);
   osc = new p5.Oscillator('sine');
   osc.amp(0);
   osc.freq(440);
@@ -150,15 +140,18 @@ function updateSound() {
 }
 
 function updateText() {
-    // Text formatting for the Click to Start/Stop Message
+  // Text formatting for the Click to Start/Stop Message
   fill(136, 170, 204); textAlign(CENTER, CENTER);  textSize(14);
 
   if (!osc.started) {
-    text('Click to start — move mouse for pitch (↔) and volume (↕)', width / 2, height / 2);
+    text('Click to start', width / 2, height / 2);
   } else {
-    text('Click to stop - move mouse for pitch (↔) and volume (↕)', width / 2, height / 2);
+    text('Click to stop', width / 2, height / 2);
   }
+  text('Move mouse for pitch (↔) and volume (↕)', width / 2, 20+height / 2);
 }
+
+
 
 function draw() {
   background(30);
@@ -166,28 +159,31 @@ function draw() {
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="Live sketch preview"></iframe>
+      <iframe class="example-frame" src="example.html"  width="300" height="300" scrolling="no" title="Live sketch preview"></iframe>
     </div>
   </div>
 
-  <h2>4. Modify your sketch to use ProControls</h2>
+  <h2>3. Use on-screen controls</h2>
   <p class="desc">
-    Swap mouse mapping for an <code>XYPad</code> — horizontal for frequency, vertical for volume —
-    plus a <code>Selector</code> to step through waveform types. Set <code>ControlStyle</code> before
-    creating controls, call <code>proControlBackground()</code> in <code>draw()</code>, and wire
-    <code>onChange</code> to update the oscillator.
+    Swap the mouse for ProControls — knobs and pads on the screen.
+    The <code>XYPad</code> works the same way: drag to change pitch and volume.
+    The <code>Selector</code> lets you pick the wave shape — sine (smooth), square (buzzy),
+    sawtooth (harsh), or triangle (soft).
+    Set <code>ControlStyle</code> before you create controls (this picks how they look).
+    Call <code>proControlBackground()</code> in <code>draw()</code>.
+    In each control's <code>onChange</code>, call <code>userStartAudio()</code>.
   </p>
 
-  <div class="example-row">
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
-      <div class="live-hint">editable — changes update the preview</div>
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
       <textarea class="live-code" spellcheck="false">ControlStyle = 'black';
 
 var osc;
 var waveOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
 function setup() {
-  createCanvas(600, 320);
+  createCanvas(300, 300);
   osc = new p5.Oscillator('sine');
   osc.amp(0);
   osc.freq(440);
@@ -199,6 +195,7 @@ function setup() {
     minY: 0, maxY: 1,
     valueX: 440, valueY: 0,
     label: 'FREQ / VOL',
+    springBack: true,
     onChange: ({ x, y }) => {
       userStartAudio();
       if (!osc.started) osc.start();
@@ -208,7 +205,7 @@ function setup() {
   });
 
   new Selector({
-    x: 240, y: 20,
+    x: 40, y: 230,
     options: waveOptions,
     label: 'WAVE',
     onChange: ({ label }) => {
@@ -224,80 +221,206 @@ function draw() {
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="ProControls XYPad preview"></iframe>
+      <iframe class="example-frame" src="example.html"  width="300" height="300" scrolling="no" title="ProControls XYPad preview"></iframe>
     </div>
   </div>
 
-  <h2>5. Modify your sketch to control ADSR and oscillators</h2>
+  <h2>4. The p5.Envelope object</h2>
   <p class="desc">
-    Connect a <code>p5.Envelope</code> to the oscillator with <code>osc.amp(env)</code>. Use a second
-    <code>MultiSlider</code> for attack, decay, sustain, and release — wire it to
-    <code>env.setADSR()</code> and an <code>ADSRDisplay</code> panel so the envelope shape updates live.
-    Click the canvas to trigger <code>env.play(osc)</code>.
+    So far, your oscillator is either on or off — like flipping a light switch.
+    A <code>p5.Envelope</code> makes volume change over time: fade in, hold, fade out.
+    That's how real instruments sound — a piano note doesn't pop on and off instantly.
+  </p>
+  <p class="desc">
+    An envelope doesn't make sound by itself. You connect it to something that does — usually
+    an oscillator's volume with <code>osc.amp(env)</code>. The envelope then acts like an automatic
+    volume knob that moves through four stages called <strong>ADSR</strong>
+    (Attack, Decay, Sustain, Release). You'll tweak those numbers in the next section.
   </p>
 
-  <div class="example-row">
+  <h3>Connect and configure an envelope</h3>
+  <p class="desc">
+    Create an envelope, set its shape with <code>setADSR()</code>, set how loud it gets with
+    <code>setRange()</code>, then plug it into the oscillator:
+  </p>
+  <pre><code><span class="kw">var</span> osc, env;
+
+env = <span class="kw">new</span> <span class="fn">p5.Envelope</span>();
+env.<span class="fn">setADSR</span>(<span class="num">0.1</span>, <span class="num">0.2</span>, <span class="num">0.5</span>, <span class="num">0.3</span>);  <span class="cmt">// attack, decay, sustain, release (seconds / level)</span>
+env.<span class="fn">setRange</span>(<span class="num">0.8</span>, <span class="num">0</span>);         <span class="cmt">// attack level (loudest), release level (silent)</span>
+
+osc = <span class="kw">new</span> <span class="fn">p5.Oscillator</span>(<span class="str">'sine'</span>);
+osc.<span class="fn">freq</span>(<span class="num">440</span>);
+osc.<span class="fn">start</span>();                     <span class="cmt">// oscillator runs; envelope controls its volume</span>
+osc.<span class="fn">amp</span>(env);                    <span class="cmt">// route volume through the envelope</span></code></pre>
+  <p class="desc">
+    <code>setRange(attackLevel, releaseLevel)</code> sets the loudest and quietest points.
+    The first number is how loud the note gets at its peak; the second is where it fades to when released.
+    Usually that's <code>setRange(0.8, 0)</code> — loud attack, silent release. Stay below 1 to protect your ears.
+    The third argument to <code>setADSR()</code> is the <strong>sustain level</strong> (0 to 1),
+    not a time — it's how loud the note holds while you're "holding the key."
+  </p>
+
+  <h3>play() vs triggerAttack() and triggerRelease()</h3>
+  <p class="desc">
+    There is no <code>env.start()</code> — envelopes use different methods depending on how you
+    want the note to behave:
+  </p>
+  <p class="desc">
+    <strong><code>env.play(osc, startTime, sustainTime)</code></strong> — plays a complete note
+    in one call. It runs attack → decay → sustain for <code>sustainTime</code> seconds → then
+    release automatically. Good for a quick click where you don't need to hold anything down.
+  </p>
+  <pre><code><span class="cmt">// One-shot note: wait 0 seconds, hold sustain for 0.5 seconds, then release</span>
+env.<span class="fn">play</span>(osc, <span class="num">0</span>, <span class="num">0.5</span>);</code></pre>
+  <p class="desc">
+    <strong><code>env.triggerAttack(osc)</code></strong> and
+    <strong><code>env.triggerRelease(osc)</code></strong> — split the note into two steps, like a
+    piano key. <code>triggerAttack()</code> runs attack and decay, then holds at the sustain level
+    until you call <code>triggerRelease()</code>, which runs the release fade. Use these when the
+    player holds a mouse button, key, or pad — you decide how long the note lasts.
+  </p>
+  <pre><code><span class="kw">function</span> <span class="fn">mousePressed</span>() {
+  userStartAudio();
+  env.<span class="fn">triggerAttack</span>();   <span class="cmt">// no osc needed — already wired in setup</span>
+}
+
+<span class="kw">function</span> <span class="fn">mouseReleased</span>() {
+  env.<span class="fn">triggerRelease</span>();
+}</code></pre>
+
+  <div class="note">
+    <strong>Which should I use?</strong>
+    Use <code>play()</code> for tap-to-play notes (drums, plucks).
+    Use <code>triggerAttack()</code> / <code>triggerRelease()</code> when the player holds a control
+    and you want the note to last exactly as long as they hold it.
+  </div>
+
+  <h3>Other useful methods and properties</h3>
+  <p class="desc">
+    These come up often once you start building instruments:
+  </p>
+  <ul class="desc-list">
+    <li><code>env.setInput(osc)</code> — another way to wire up in <code>setup()</code> (like <code>osc.amp(env)</code>)</li>
+    <li><code>env.setExp(true)</code> — use exponential curves instead of linear ones (often sounds more natural for volume)</li>
+    <li><code>env.ramp(osc, level, startTime, duration)</code> — a quick volume bump using the attack and decay times</li>
+    <li><code>osc.freq(env)</code> — an envelope can control pitch or other parameters, not just volume</li>
+    <li><strong>Readable properties:</strong> <code>attackTime</code>, <code>decayTime</code>, <code>releaseTime</code>, <code>attackLevel</code>, <code>sustainLevel</code>, <code>releaseLevel</code></li>
+  </ul>
+  <p class="desc">
+    See the full API in the
+    <a href="https://p5js.org/reference/p5.sound/p5.Envelope/" target="_blank" rel="noopener">p5.Envelope reference</a>.
+  </p>
+
+  <p class="desc">
+    Try it below — hold the mouse button down to play a note, let go to release it.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
-      <div class="live-hint">editable — changes update the preview</div>
-      <textarea class="live-code" spellcheck="false">ControlStyle = 'black';
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var osc, env;
+
+function setup() {
+  createCanvas(300, 300);
+
+  env = new p5.Envelope();
+  env.setADSR(0.05, 0.15, 0.4, 4.0);
+  env.setRange(0.8, 0);
+
+  osc = new p5.Oscillator('sine');
+  osc.freq(110);
+  osc.start();
+  osc.amp(env);
+}
+
+function mousePressed() {
+  userStartAudio();
+  env.triggerAttack();
+}
+
+function mouseReleased() {
+  env.triggerRelease();
+}
+
+function draw() {
+  background(30);
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  text('Hold mouse down to play', width / 2, height / 2 - 8);
+  textSize(11);
+  text('triggerAttack / triggerRelease', width / 2, height / 2 + 14);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Envelope triggerAttack preview"></iframe>
+    </div>
+  </div>
+
+  <h2>5. Shape each note with ADSR controls</h2>
+  <p class="desc">
+    Now put it all together with ProControls so you can see and tweak the envelope shape live.
+    ADSR stands for <strong>A</strong>ttack (how fast the note fades in),
+    <strong>D</strong>ecay (how fast it drops after the attack),
+    <strong>S</strong>ustain (how loud it holds), and
+    <strong>R</strong>elease (how long it fades out).
+    The <code>MultiSlider</code> controls change volume, pitch, and ADSR values.
+    The <code>ADSRDisplay</code> draws the shape on screen.
+    Click the canvas to fire a one-shot note with <code>env.play(osc)</code>.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="500">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'blue';
 
 var osc, env, adsr;
 var waveOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
+let piano;
+
 function setup() {
-  createCanvas(600, 320);
+  createCanvas(300, 600);
 
   osc = new p5.Oscillator('sine');
   osc.freq(440);
-  osc.start();
 
   env = new p5.Envelope();
   env.setADSR(0.1, 0.2, 0.5, 0.3);
-  env.setRange(0, 0.8);
+  env.setRange(0.8, 0);
   osc.amp(env);
+  osc.start();
+
+  piano = new PianoPad({x:20,y:290,width:260,noteCount:12,onChange:pianoChange,firstNote:"C1"});
 
   adsr = new ADSRDisplay({
-    x: 300, y: 20,
-    width: 280, height: 130,
+    x: 30, y: 20,
+    width: 240, height: 100,
     attack: 0.1, decay: 0.2, sustain: 0.5, release: 0.3,
     label: 'ENV',
   });
 
-  new MultiSlider({
-    x: 20, y: 20,
-    height: 130,
-    sliders: {
-      'VOL':  { value: 0.8, min: 0, max: 1,   width: 70, readout: 'db' },
-      'FREQ': { value: 440, min: 110, max: 880, width: 70, readout: 'raw', decimals: 0 },
-    },
-    onChange: (v) => {
-      userStartAudio();
-      env.setRange(0, v.VOL);
-      osc.freq(v.FREQ);
-    },
-  });
-
   new Selector({
-    x: 180, y: 20,
+    x: 80, y: 430,
     options: waveOptions,
     label: 'WAVE',
-    onChange: ({ label }) => {
-      userStartAudio();
-      osc.setType(label);
+    onChange: (data) => {
+      osc.setType(data.label);
     },
   });
 
   new MultiSlider({
-    x: 20, y: 165,
+    x: 20, y: 135,
     height: 130,
     sliders: {
       'A': { value: 0.1, min: 0, max: 2, width: 60, readout: 'raw', decimals: 2 },
       'D': { value: 0.2, min: 0, max: 2, width: 60, readout: 'raw', decimals: 2 },
       'S': { value: 0.5, min: 0, max: 1, width: 60, readout: 'raw', decimals: 2 },
-      'R': { value: 0.3, min: 0, max: 2, width: 60, readout: 'raw', decimals: 2 },
+      'R': { value: 0.3, min: 0, max: 20, width: 60, readout: 'raw', decimals: 2 },
     },
     onChange: (v) => {
-      userStartAudio();
       env.setADSR(v.A, v.D, v.S, v.R);
       adsr.attack = v.A;
       adsr.decay = v.D;
@@ -307,22 +430,22 @@ function setup() {
   });
 }
 
-function mousePressed() {
-  userStartAudio();
-  env.play(osc, 0, 0.5);
+function pianoChange(data) {
+  if (data.state=="on") {
+    osc.freq(data.freq);
+    env.triggerAttack();
+  } else if (data.state=="off") {
+    env.triggerRelease();
+  }
 }
 
 function draw() {
   proControlBackground();
-  fill(136, 170, 204);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  textSize(12);
-  text('Click canvas to play a note', width / 2, height - 14);
-}</textarea>
+}
+</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="600" height="320" scrolling="no" title="ADSR oscillator preview"></iframe>
+      <iframe class="example-frame" src="example.html"  width="300" height="300" scrolling="no" title="ADSR oscillator preview"></iframe>
     </div>
   </div>
 

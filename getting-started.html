@@ -20,6 +20,12 @@
   <span class="sep">·</span>
   <a href="getting-started.html" style="color:var(--accent);">Getting Started</a>
   <span class="sep">·</span>
+  <a href="oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
   <a href="#">Resources</a>
   <span class="sep">·</span>
   <a href="#">Community</a>
@@ -35,7 +41,7 @@
         <h1><span class="accent">Getting</span> <span class="dim">Started</span></h1>
         <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
       </div>
-      <span class="hero-compact-sub">Set up p5.js and p5.sound — then make your first sound with the mouse</span>
+      <span class="hero-compact-sub">Set up your tools, then make your first beep in the browser</span>
     </div>
     <a href="https://p5js.org/reference/p5.sound/" class="hero-compact-link" target="_blank" rel="noopener">↗ p5.sound Docs</a>
   </div>
@@ -43,10 +49,10 @@
 
 <div class="page">
 
-  <h2>1. Add the script tags</h2>
+  <h2>1. Add these lines to your page</h2>
   <p class="desc">
-    Every exercise on this site runs in the browser. Add these lines to your HTML <code>&lt;head&gt;</code>.
-    Load p5.js first, then p5.sound.
+    Everything on this site runs in your web browser — nothing to install.
+    Copy these lines into your HTML file. Load them in this order: p5.js first, then p5.sound, then ProControls.
   </p>
   <pre><code><span class="cmt">&lt;!-- Google icon font (optional — used by ProControls) --&gt;</span>
 <span class="kw">&lt;link</span> href=<span class="str">"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;display=block"</span> rel=<span class="str">"stylesheet"</span><span class="kw">&gt;</span>
@@ -57,22 +63,26 @@
 <span class="cmt">&lt;!-- p5.sound (requires p5.js above) --&gt;</span>
 <span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
 
-<span class="cmt">&lt;!-- ProControls — needed from section 4 onward --&gt;</span>
-<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/gh/dstein-art/proControls4p5js@v0.8.1/ProControls.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+<span class="cmt">&lt;!-- ProControls — needed for section 3 --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/gh/dstein-art/proControls4p5js@v0.8.2/ProControls.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
 
 <span class="cmt">&lt;!-- Your sketch --&gt;</span>
 <span class="kw">&lt;script</span> src=<span class="str">"sketch.js"</span><span class="kw">&gt;&lt;/script&gt;</span></code></pre>
 
   <div class="note">
-    <strong>Sections 2</strong> needs only p5.js and p5.sound. <strong>Section 3</strong> adds ProControls
-    for hardware-style UI — see the
-    <a href="https://procontrols.org/docs/gettingStarted.html" target="_blank" rel="noopener">ProControls docs</a>.
+    <strong>Want a shortcut?</strong>
+    We made a p5.js Editor template with everything already set up.
+    Log in, open the template, and click Duplicate to save your own copy.
+    <a href="https://editor.p5js.org/des8963/sketches/JZVqouyF-" target="_blank" rel="noopener">Open template</a>.
   </div>
 
-  <h2>2. Write your first sketch</h2>
+
+  <h2>2. Make your first beep</h2>
   <p class="desc">
-    To test out that P5 Sound is working, create a <code>p5.Oscillator</code> in <code>setup()</code>, then set the amplitude and frequency, and call 
-    <code>osc.start()</code> to start the oscillator.
+    This sketch plays one steady beep so you know sound is working.
+    In <code>setup()</code>, create a <code>p5.Oscillator</code> — that's a tone generator.
+    Use <code>amp()</code> to set how loud it is and <code>freq()</code> to set how high or low it sounds.
+    Then call <code>osc.start()</code> to play it.
   </p>
 
   <div class="example-row">
@@ -94,24 +104,27 @@ function draw() {
     </div>
   </div>
 
-  <h3>Audio context</h3>
+  <h3>Why do I need to click first?</h3>
   <p class="desc">
-    In future tutorials, you will learn that browsers block audio until the user clicks. The above example works in the p5 
-    editor because in order for a sketch to run in the p5 editor, you have already interacted by clicking the play button to start the sketch.
+    Browsers won't play sound until you click something — it's a safety rule.
+    This example works in the p5.js Editor because you already clicked Play to run it.
+    In section 3, <code>userStartAudio()</code> turns sound on the first time you use the pad.
   </p>
 
-  <h2>3. Modify your sketch to use ProControls</h2>
+  <h2>3. Add a control pad</h2>
   <p class="desc">
-    Swap mouse mapping for an <code>XYPad</code> — horizontal for frequency, vertical for volume —
-    plus a <code>Selector</code> to step through waveform types. Set <code>ControlStyle</code> before
-    creating controls, call <code>proControlBackground()</code> in <code>draw()</code>, and wire
-    <code>onChange</code> to update the oscillator.
+    ProControls gives you an <code>XYPad</code> — a square you drag inside.
+    Left and right changes pitch (how high or low the note is).
+    Up and down changes volume (how loud it is).
+    Call <code>proControlBackground()</code> in <code>draw()</code> to draw the panel behind your controls.
+    When the pad moves (<code>onChange</code>), call <code>userStartAudio()</code> and update the oscillator.
   </p>
 
-  <div class="example-row" data-canvas-w="250" data-canvas-h="250">
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
-      <div class="live-hint">editable — changes update the preview</div>
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
       <textarea class="live-code" spellcheck="false">
+ControlStyle = 'white'; 
 var osc;
 
 function setup() {

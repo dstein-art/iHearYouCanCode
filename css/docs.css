@@ -189,6 +189,22 @@ body.docs-page .note a {
 
 body.docs-page .note a:hover { text-decoration: underline; }
 
+body.docs-page .desc-list {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 14px 1.2em;
+  padding: 0;
+}
+
+body.docs-page .desc-list li {
+  margin-bottom: 6px;
+}
+
+body.docs-page .desc-list code {
+  font-size: 12px;
+}
+
 body.docs-page hr {
   border: none;
   border-top: 1px solid var(--border);
@@ -213,6 +229,10 @@ body.docs-page hr {
 }
 
 .live-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: .06em;
@@ -224,6 +244,40 @@ body.docs-page hr {
   border-radius: var(--radius) var(--radius) 0 0;
   padding: 4px 10px;
   font-family: 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.live-hint-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.live-hint-label a {
+  color: inherit;
+}
+
+.live-hint-label a:hover {
+  text-decoration: underline;
+}
+
+.live-copy-btn {
+  flex-shrink: 0;
+  font: inherit;
+  color: var(--accent);
+  background: #0077cc22;
+  border: 1px solid #0077cc55;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.live-copy-btn:hover {
+  background: #0077cc44;
+}
+
+.live-copy-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .live-code {

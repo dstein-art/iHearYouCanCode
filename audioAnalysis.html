@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Analysis — iHearYouCanCode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/docs.css">
+</head>
+<body class="docs-page">
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" title="Home" style="padding:5px 8px;font-size:18px;line-height:1;display:flex;align-items:center;">
+    <span class="material-symbols-outlined" style="font-size:20px;">home</span>
+  </a>
+  <span class="sep">·</span>
+  <a href="#">About</a>
+  <span class="sep">·</span>
+  <a href="getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html" style="color:var(--accent);">Analysis</a>
+  <span class="sep">·</span>
+  <a href="#">Resources</a>
+  <span class="sep">·</span>
+  <a href="#">Community</a>
+  <span class="sep">·</span>
+  <a href="#" style="color:var(--accent2);">Get Involved ↗</a>
+</nav>
+
+<!-- ── Compact hero ── -->
+<div class="hero-compact">
+  <div class="hero-compact-inner">
+    <div class="hero-compact-left">
+      <div>
+        <h1><span class="accent">Audio</span> <span class="dim">Analysis</span></h1>
+        <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
+      </div>
+      <span class="hero-compact-sub">Visualize sound — waveforms, frequency spectra, and loudness</span>
+    </div>
+    <a href="https://p5js.org/reference/p5.sound/p5.FFT/" class="hero-compact-link" target="_blank" rel="noopener">↗ p5.FFT Docs</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="note">
+    This track follows the
+    <a href="https://colonelpanix.notion.site/Code-2-Week-2-Sound-Module-Review-p5-Sound-75c1fa2e49d983e4a70981ac8a227976" target="_blank" rel="noopener">Visualizing Sound</a>
+    section from Code 2 Week 2. Do <a href="getting-started.html">Getting Started</a> and
+    <a href="oscillators.html">Oscillators</a> first if you're new here.
+  </div>
+
+  <h2>1. Map oscillator frequencies to the screen</h2>
+  <p class="desc">
+    Start with several sine oscillators at random pitches. Each frame, draw a green line where
+    that oscillator's frequency lands on the canvas — low notes near the bottom, high notes near the top.
+    Click to pick new random frequencies.
+  </p>
+  <p class="desc">
+    This is the ground truth: you <em>know</em> what frequencies you're playing because you set them
+    with <code>osc.freq()</code>. Later you'll try to figure out frequencies just by listening and analyzing.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var oscCount = 5;
+var allOscs = [];
+var minFreq = 100;
+var maxFreq = 800;
+
+function setup() {
+  createCanvas(300, 300);
+  for (var i = 0; i < oscCount; i++) {
+    var osc = new p5.Oscillator('sine');
+    osc.freq(random(minFreq, maxFreq));
+    osc.amp(1.0 / oscCount);
+    osc.start();
+    allOscs.push(osc);
+  }
+}
+
+function draw() {
+  background(30);
+  stroke(80, 220, 120);
+  for (var i = 0; i < allOscs.length; i++) {
+    var drawY = map(allOscs[i].f, minFreq, maxFreq, height, 0);
+    line(0, drawY, width, drawY);
+  }
+}
+
+function mousePressed() {
+  userStartAudio();
+  for (var i = 0; i < oscCount; i++) {
+    allOscs[i].freq(random(minFreq, maxFreq));
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Oscillator frequency map preview"></iframe>
+    </div>
+  </div>
+
+  <h2>2. Analyze frequencies with p5.FFT</h2>
+  <p class="desc">
+    Given any audio signal, how do you recover the frequencies inside it? A
+    <strong>Fast Fourier Transform</strong> (<code>p5.FFT</code>) breaks sound into chunks of the
+    frequency spectrum. Call <code>fft.analyze()</code> each frame, then use
+    <code>fft.getEnergy(hz)</code> to ask how loud a frequency range is.
+  </p>
+  <p class="desc">
+    Grey bars show what the FFT guesses. Green lines show the real oscillator frequencies.
+    They mostly match — but FFT results are a bit <em>chunky</em> because the algorithm uses
+    evenly-spaced bins instead of exact pitch numbers.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var oscCount = 5;
+var allOscs = [];
+var fft;
+var minFreq = 100;
+var maxFreq = 800;
+
+function setup() {
+  createCanvas(300, 300);
+  for (var i = 0; i < oscCount; i++) {
+    var osc = new p5.Oscillator('sine');
+    osc.freq(random(minFreq, maxFreq));
+    osc.amp(1.0 / oscCount);
+    osc.start();
+    allOscs.push(osc);
+  }
+  fft = new p5.FFT();
+}
+
+function draw() {
+  background(30);
+  fft.analyze();
+  stroke(160, 160, 170);
+  for (var hz = minFreq; hz < maxFreq; hz++) {
+    var drawY = map(hz, minFreq, maxFreq, height, 0);
+    var val = fft.getEnergy(hz);
+    var lineW = map(val, 0, 255, 0, width);
+    line(0, drawY, lineW, drawY);
+  }
+  stroke(80, 220, 120);
+  for (var j = 0; j < allOscs.length; j++) {
+    var y = map(allOscs[j].f, minFreq, maxFreq, height, 0);
+    line(0, y, width, y);
+  }
+}
+
+function mousePressed() {
+  userStartAudio();
+  for (var i = 0; i < oscCount; i++) {
+    allOscs[i].freq(random(minFreq, maxFreq));
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="FFT getEnergy preview"></iframe>
+    </div>
+  </div>
+
+  <h2>3. Draw the frequency spectrum</h2>
+  <p class="desc">
+    Any sound — not just oscillators — can be drawn as a bar graph across the frequency spectrum.
+    Load a sound file, loop it, and use the values from <code>fft.analyze()</code> directly.
+    Each bar is one FFT bin: low bins on the left, high bins on the right.
+  </p>
+  <p class="desc">
+    You can change the number of bins in the constructor — it must be a power of 2
+    (64, 128, 256, 512, or 1024). Fewer bins = chunkier but faster to draw.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var beat, fft;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  beat = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+  fft = new p5.FFT(0.5, 64);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!beat.isLoaded()) return;
+  if (beat.isPlaying()) {
+    beat.stop();
+  } else {
+    beat.loop();
+  }
+}
+
+function draw() {
+  background(30);
+  if (!beat.isPlaying()) {
+    fill(136, 170, 204);
+    noStroke();
+    textAlign(CENTER, CENTER);
+    textSize(13);
+    text('Click to loop', width / 2, height / 2);
+    return;
+  }
+  noStroke();
+  fill(100, 180, 255);
+  var bins = fft.analyze();
+  for (var i = 0; i < bins.length; i++) {
+    var drawY = map(i, 0, bins.length, 0, height);
+    var barW = map(bins[i], 0, 255, 0, width);
+    var barH = height / bins.length;
+    rect(0, drawY, barW, barH);
+  }
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Frequency spectrum preview"></iframe>
+    </div>
+  </div>
+
+  <h2>4. Draw the waveform</h2>
+  <p class="desc">
+    <code>fft.waveform()</code> looks at a tiny slice of time instead of frequency.
+    It returns values between -1 and 1 — the shape of the wave at this moment.
+    Connect the dots to draw the classic squiggly line you see in audio editors.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var beat, fft;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  beat = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+  fft = new p5.FFT();
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!beat.isLoaded()) return;
+  if (beat.isPlaying()) {
+    beat.stop();
+  } else {
+    beat.loop();
+  }
+}
+
+function draw() {
+  background(30);
+  if (!beat.isPlaying()) {
+    fill(136, 170, 204);
+    noStroke();
+    textAlign(CENTER, CENTER);
+    textSize(13);
+    text('Click to loop', width / 2, height / 2);
+    return;
+  }
+  stroke(100, 180, 255);
+  noFill();
+  var waveform = fft.waveform();
+  beginShape();
+  for (var i = 0; i < waveform.length; i++) {
+    var x = map(i, 0, waveform.length, 0, width);
+    var y = map(waveform[i], -1, 1, height, 0);
+    vertex(x, y);
+  }
+  endShape();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Waveform preview"></iframe>
+    </div>
+  </div>
+
+  <h2>5. Build a spectrogram</h2>
+  <p class="desc">
+    A <strong>spectrogram</strong> shows how frequencies change over time. Each column is one
+    snapshot of the spectrum; scroll across the screen to paint a history — brighter means louder
+    at that frequency.
+  </p>
+  <p class="desc">
+    This is the slit-scan technique from the Week 2 notes: use bin values as fill color and step
+    across the canvas one column at a time.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var beat, fft;
+var xoff = 0;
+var xstep = 2;
+var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+
+function preload() {
+  beat = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+  fft = new p5.FFT(0.5, 64);
+  background(0);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (!beat.isLoaded()) return;
+  if (beat.isPlaying()) {
+    beat.stop();
+  } else {
+    beat.loop();
+    background(0);
+    xoff = 0;
+  }
+}
+
+function draw() {
+  if (!beat.isPlaying()) {
+    fill(136, 170, 204);
+    noStroke();
+    textAlign(CENTER, CENTER);
+    textSize(13);
+    text('Click to loop', width / 2, height / 2);
+    return;
+  }
+  noStroke();
+  var bins = fft.analyze();
+  for (var i = 0; i < bins.length; i++) {
+    var drawY = map(i, 0, bins.length, 0, height);
+    var barH = height / bins.length;
+    fill(bins[i]);
+    rect(xoff, drawY, xstep, barH);
+  }
+  xoff += xstep;
+  if (xoff > width) xoff = 0;
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Spectrogram preview"></iframe>
+    </div>
+  </div>
+
+  <h3>Analyzing loudness with p5.Amplitude</h3>
+  <p class="desc">
+    Before FFT, there's an even simpler question: how loud is the signal right now?
+    <code>p5.Amplitude</code> averages a short slice of the wave and returns a level from 0 to 1
+    with <code>getLevel()</code>. Hook it up with <code>amp.setInput(mic)</code> or
+    <code>amp.setInput(soundFile)</code>.
+  </p>
+  <pre><code><span class="kw">var</span> mic, amp;
+
+mic = <span class="kw">new</span> <span class="fn">p5.AudioIn</span>();
+mic.<span class="fn">start</span>();
+
+amp = <span class="kw">new</span> <span class="fn">p5.Amplitude</span>();
+amp.<span class="fn">setInput</span>(mic);
+
+<span class="kw">var</span> level = amp.<span class="fn">getLevel</span>();
+<span class="cmt">// map level to the height of a bar in draw()</span></code></pre>
+  <p class="desc">
+    For microphone sketches, call <code>fft.setInput(mic)</code> or <code>amp.setInput(mic)</code>
+    so analysis follows the mic instead of the sketch's main output.
+    Mic access may not work inside the live preview — run in the
+    <a href="https://editor.p5js.org/" target="_blank" rel="noopener">p5.js Editor</a> and allow
+    microphone permission.
+  </p>
+
+  <h3>Handy FFT methods</h3>
+  <ul class="desc-list">
+    <li><code>fft.analyze()</code> — frequency spectrum array (0–255 per bin)</li>
+    <li><code>fft.waveform()</code> — time-domain wave shape (-1 to 1)</li>
+    <li><code>fft.getEnergy(hz)</code> or <code>getEnergy('bass')</code> — energy at one frequency or range</li>
+    <li><code>fft.setInput(source)</code> — analyze a specific sound or mic instead of the main output</li>
+    <li><code>new p5.FFT(smoothing, bins)</code> — smoothing 0–1; bins must be a power of 2</li>
+  </ul>
+  <p class="desc">
+    See the
+    <a href="https://p5js.org/reference/p5.sound/p5.FFT/" target="_blank" rel="noopener">p5.FFT reference</a>
+    and the full
+    <a href="https://colonelpanix.notion.site/Code-2-Week-2-Sound-Module-Review-p5-Sound-75c1fa2e49d983e4a70981ac8a227976" target="_blank" rel="noopener">Week 2 Sound Module Review</a>.
+  </p>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a href="index.html" class="footer-brand">
+          <span class="footer-brand-accent">iHearYou</span><span class="footer-brand-dim">CanCode</span>
+        </a>
+        <p class="footer-copyright">&copy; 2026 David Stein</p>
+      </div>
+      <a href="mailto:davidstein@nyu.edu" class="footer-contact">davidstein@nyu.edu</a>
+    </div>
+    <div id="footer-production" class="footer-production" hidden>
+      <p class="footer-credit"></p>
+      <p class="footer-links"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/live-editor.js"></script>
+
+<script>
+  fetch('https://davidstein.us/shared/footer.json')
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('footer-production');
+      el.querySelector('.footer-credit').textContent = `${data.credit}…`;
+
+      const linksEl = el.querySelector('.footer-links');
+      data.links.forEach((link, i) => {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'sep';
+          sep.textContent = '·';
+          linksEl.appendChild(sep);
+        }
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.textContent = link.label;
+        linksEl.appendChild(a);
+      });
+
+      el.hidden = false;
+    })
+    .catch(() => {});
+</script>
+
+</body>
+</html>
