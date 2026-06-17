@@ -183,6 +183,131 @@ function draw() {
     bottom-left for a tight single slap-back echo.
   </p>
 
+  <h2>3. Shape notes with ADSR, reverb, and a low pass filter</h2>
+  <p class="desc">
+    This example combines everything: an oscillator shaped by an <strong>ADSR envelope</strong>,
+    a <strong>low pass filter</strong> to control how bright or dull the tone is, and
+    <strong>reverb</strong> to add space and depth. The top slider bank controls the
+    Attack, Decay, Sustain, and Release of the envelope — the same four stages from the
+    Oscillators page. The second slider bank lets you blend in reverb and sweep the filter
+    cutoff in real time. Play notes on the keyboard at the bottom.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="600">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'blue';
+
+var osc, env, filter, reverb, adsr;
+var waveOptions = ['sine', 'square', 'sawtooth', 'triangle'];
+let piano;
+
+function setup() {
+  createCanvas(300, 600);
+
+  osc = new p5.Oscillator('sine');
+  osc.freq(440);
+
+  env = new p5.Envelope();
+  env.setADSR(0.1, 0.2, 0.5, 0.3);
+  env.setRange(0.8, 0);
+  osc.amp(env);
+  osc.start();
+
+  filter = new p5.LowPass();
+  reverb = new p5.Reverb();
+
+  osc.disconnect();
+  osc.connect(filter);
+  reverb.process(filter);
+
+  piano = new PianoPad({
+    x: 20, y: 375,
+    width: 260, noteCount: 12,
+    onChange: pianoChange, firstNote: 'C1'
+  });
+
+  adsr = new ADSRDisplay({
+    x: 30, y: 15,
+    width: 240, height: 75,
+    attack: 0.1, decay: 0.2, sustain: 0.5, release: 0.3,
+    label: 'ENV',
+  });
+
+  new Selector({
+    x: 75, y: 325,
+    options: waveOptions,
+    label: 'WAVE',
+    onChange: (data) => { osc.setType(data.label); },
+  });
+
+  new MultiSlider({
+    x: 20, y: 100,
+    height: 110,
+    sliders: {
+      'A': { value: 0.1, min: 0, max: 2,  width: 60, readout: 'raw', decimals: 2 },
+      'D': { value: 0.2, min: 0, max: 2,  width: 60, readout: 'raw', decimals: 2 },
+      'S': { value: 0.5, min: 0, max: 1,  width: 60, readout: 'raw', decimals: 2 },
+      'R': { value: 0.3, min: 0, max: 20, width: 60, readout: 'raw', decimals: 2 },
+    },
+    onChange: (v) => {
+      env.setADSR(v.A, v.D, v.S, v.R);
+      adsr.attack  = v.A;
+      adsr.decay   = v.D;
+      adsr.sustain = v.S;
+      adsr.release = v.R;
+    },
+  });
+
+  new MultiSlider({
+    x: 20, y: 222,
+    height: 90,
+    sliders: {
+      'REVERB': { value: 0.3, min: 0,   max: 1,     width: 130, readout: 'raw', decimals: 2 },
+      'CUTOFF': { value: 5000, min: 200, max: 12000, width: 130, readout: 'raw', decimals: 0 },
+    },
+    onChange: (v) => {
+      reverb.drywet(v.REVERB);
+      filter.freq(v.CUTOFF);
+    },
+  });
+}
+
+function pianoChange(data) {
+  if (data.state == 'on') {
+    osc.freq(data.freq);
+    env.triggerAttack();
+  } else if (data.state == 'off') {
+    env.triggerRelease();
+  }
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="600" scrolling="no" title="ADSR with reverb and filter preview"></iframe>
+    </div>
+  </div>
+
+  <h3>How it works</h3>
+  <p class="desc">
+    The signal chain is: <strong>oscillator → low pass filter → speakers</strong>, with reverb
+    tapped off the filter as a parallel path. <code>osc.disconnect()</code> stops the oscillator
+    from going straight to the speakers. <code>osc.connect(filter)</code> routes it through the
+    filter first. <code>reverb.process(filter)</code> takes the filtered signal and also sends
+    it through the reverb — so you hear the clean filtered tone plus the reverberant version
+    blended on top.
+  </p>
+  <p class="desc">
+    The <strong>REVERB</strong> slider calls <code>reverb.drywet()</code> — 0 is no reverb at
+    all, 1 is maximum. The <strong>CUTOFF</strong> slider calls <code>filter.freq()</code> to
+    set the low pass cutoff point: low values (around 200 Hz) give a muffled, telephone sound;
+    high values (around 12 000 Hz) let most frequencies through and sound nearly unfiltered. Try
+    a square wave with a low cutoff and lots of reverb for a warm, spacious pad sound.
+  </p>
+
   <h3>p5.sound effects</h3>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px 32px;margin:0 0 8px;">
 

@@ -50,6 +50,33 @@
     it shows you how to add p5.js, p5.sound, and ProControls.
   </div>
 
+  <h2>What is an oscillator?</h2>
+  <p class="desc">
+    An oscillator is something that moves back and forth in a regular, repeating pattern — like a
+    pendulum or a guitar string vibrating. In audio, an oscillator generates a waveform: a signal
+    that rises and falls at a set speed (its <strong>frequency</strong>, measured in Hz) and height
+    (<strong>amplitude</strong>, which we hear as volume). That repeating wave is what travels
+    through your speakers and becomes sound.
+  </p>
+  <p class="desc">
+    Oscillators are the fundamental building blocks of sound synthesis. Even complex, rich sounds
+    — a violin, a human voice, a distorted guitar — can be understood as a combination of many
+    simple oscillators layered together at different frequencies and volumes.
+  </p>
+  <p class="desc">
+    This idea goes back to the mathematician <strong>Joseph Fourier</strong>, who showed in the
+    early 1800s that <em>any</em> repeating waveform can be broken down into a sum of simple sine
+    waves. That means a square wave, a sawtooth, or a harsh buzzing sound is really just a pile of
+    smooth, pure sine waves added together at precise ratios. Flip it around and you can
+    <em>build</em> complex sounds by stacking simple ones — which is exactly what a synthesizer does.
+  </p>
+  <div class="note">
+    <strong>Try it:</strong> the
+    <a href="https://teropa.info/harmonics-explorer/" target="_blank" rel="noopener">Harmonics Explorer</a>
+    lets you add and remove sine wave harmonics and hear how they combine into more complex
+    waveforms in real time — a great way to see Fourier's idea in action before writing any code.
+  </div>
+
   <h2>1. Click to turn the sound on</h2>
   <p class="desc">
     This sketch makes a tone you turn on and off by clicking the canvas.
