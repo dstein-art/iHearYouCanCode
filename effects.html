@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Effects &amp; Filters — iHearYouCanCode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/docs.css">
+</head>
+<body class="docs-page">
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" title="Home" style="padding:5px 8px;font-size:18px;line-height:1;display:flex;align-items:center;">
+    <span class="material-symbols-outlined" style="font-size:20px;">home</span>
+  </a>
+  <span class="sep">·</span>
+  <a href="getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
+  <a href="effects.html" style="color:var(--accent);">Effects</a>
+  <span class="sep">·</span>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
+</nav>
+
+<!-- ── Compact hero ── -->
+<div class="hero-compact">
+  <div class="hero-compact-inner">
+    <div class="hero-compact-left">
+      <div>
+        <h1><span class="accent">Effects</span> <span class="dim">&amp; Filters</span></h1>
+        <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
+      </div>
+      <span class="hero-compact-sub">Shape your sound with filters, reverb, and delay</span>
+    </div>
+    <a href="https://p5js.org/reference/p5.sound/p5.Filter/" class="hero-compact-link" target="_blank" rel="noopener">↗ p5.Filter Docs</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="note">
+    Haven't set things up yet? Do <a href="getting-started.html">Getting Started</a> first —
+    it shows you how to add p5.js, p5.sound, and ProControls.
+  </div>
+
+  <h2>1. Low pass filter on a square wave</h2>
+  <p class="desc">
+    A <strong>low pass filter</strong> lets low frequencies through and cuts the high ones.
+    The cutoff frequency is the point where it starts cutting — everything above it fades out.
+    A square wave is a great sound to filter because it's naturally bright and buzzy, so the
+    effect of the filter is very obvious. Move the mouse left and right to sweep the cutoff
+    up and down — all the way left is a dull thud, all the way right is the full harsh buzz.
+    Click the canvas to start and stop.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var osc, filter;
+var playing = false;
+
+function setup() {
+  createCanvas(300, 300);
+  osc = new p5.Oscillator('square');
+  osc.freq(110);
+  osc.amp(0.5);
+
+  filter = new p5.LowPass();
+  osc.disconnect();
+  osc.connect(filter);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (playing) {
+    osc.stop();
+    playing = false;
+  } else {
+    osc.start();
+    playing = true;
+  }
+}
+
+function draw() {
+  background(30);
+
+  var cutoff = map(mouseX, 0, width, 50, 10000);
+  filter.freq(cutoff);
+
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  text(playing ? 'Move mouse to sweep filter' : 'Click to start', width / 2, height / 2 - 10);
+
+  textSize(11);
+  text('Cutoff: ' + round(cutoff) + ' Hz', width / 2, height / 2 + 14);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Low pass filter preview"></iframe>
+    </div>
+  </div>
+
+  <h3>How it works</h3>
+  <p class="desc">
+    <code>osc.disconnect()</code> stops the oscillator from going straight to the speakers.
+    <code>osc.connect(filter)</code> routes the signal through the filter first — the filter
+    then sends its output to the speakers. This is called a <strong>signal chain</strong>:
+    oscillator → filter → output. <code>filter.freq(cutoff)</code> sets the cutoff point each
+    frame, and since <code>mouseX</code> changes as you move, the filter sweeps in real time.
+  </p>
+
+  <h2>2. Delay effect on a drum sample</h2>
+  <p class="desc">
+    A <strong>delay</strong> records the incoming sound and plays it back after a short pause —
+    creating an echo. Feed it back into itself and you get repeating echoes that fade out over
+    time. Two parameters control everything: <strong>delay time</strong> (how long between
+    echoes) and <strong>feedback</strong> (how much of the echo feeds back for another repeat).
+    Click to hit the drum, then move the mouse — left/right changes the echo timing, up/down
+    changes how many times it repeats.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var drum, delay;
+var SOUND_URL = '/assets/superdirt/000_BD.wav';
+
+function preload() {
+  drum = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+  delay = new p5.Delay();
+  delay.process(drum, 0.25, 0.5, 2300);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (drum.isLoaded()) drum.play();
+}
+
+function draw() {
+  background(30);
+
+  var delayTime = map(mouseX, 0, width,  0.05, 0.75);
+  var feedback  = map(mouseY, height, 0, 0.0,  0.85);
+  delay.delayTime(delayTime);
+  delay.feedback(feedback);
+
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  text('Click to hit the drum', width / 2, height / 2 - 20);
+  textSize(11);
+  text('delay: ' + delayTime.toFixed(2) + 's', width / 2, height / 2 + 8);
+  text('feedback: ' + feedback.toFixed(2), width / 2, height / 2 + 24);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Delay effect preview"></iframe>
+    </div>
+  </div>
+
+  <h3>How it works</h3>
+  <p class="desc">
+    <code>delay.process(drum, 0.25, 0.5, 2300)</code> wires the drum into the delay and sets
+    starting values: 0.25 seconds between echoes, 0.5 feedback (each echo is half as loud as
+    the previous), and a 2300 Hz low-pass on the feedback path so the repeats sound a bit
+    darker each time — a classic trick that makes the echoes feel more natural.
+    <code>delay.delayTime()</code> and <code>delay.feedback()</code> update those values live
+    each frame from the mouse position. Move the mouse to the top-right for a long washy trail;
+    bottom-left for a tight single slap-back echo.
+  </p>
+
+  <h3>p5.sound effects</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px 32px;margin:0 0 8px;">
+
+    <div>
+      <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6699bb;margin:0 0 8px;">Filters</p>
+      <ul class="desc-list" style="margin:0;">
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Filter/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Filter</code></a> — base filter class</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.LowPass/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.LowPass</code></a> — cuts high frequencies</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.HighPass/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.HighPass</code></a> — cuts low frequencies</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.BandPass/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.BandPass</code></a> — passes a frequency band</li>
+      </ul>
+    </div>
+
+    <div>
+      <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6699bb;margin:0 0 8px;">Time-based</p>
+      <ul class="desc-list" style="margin:0;">
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Delay/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Delay</code></a> — echo with feedback</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Reverb/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Reverb</code></a> — algorithmic room simulation</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Convolver/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Convolver</code></a> — convolution reverb using impulse responses</li>
+      </ul>
+    </div>
+
+    <div>
+      <p style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6699bb;margin:0 0 8px;">Dynamics &amp; Space</p>
+      <ul class="desc-list" style="margin:0;">
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Compressor/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Compressor</code></a> — controls dynamic range</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Distortion/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Distortion</code></a> — waveshaper / overdrive</li>
+        <li><a href="https://p5js.org/reference/p5.sound/p5.Panner3D/" target="_blank" rel="noopener" style="color:var(--accent);"><code>p5.Panner3D</code></a> — 3D spatial positioning</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a href="index.html" class="footer-brand">
+          <span class="footer-brand-accent">iHearYou</span><span class="footer-brand-dim">CanCode</span>
+        </a>
+        <p class="footer-copyright">&copy; 2026 David Stein</p>
+      </div>
+      <a href="mailto:davidstein@nyu.edu" class="footer-contact">davidstein@nyu.edu</a>
+    </div>
+    <div id="footer-production" class="footer-production" hidden>
+      <p class="footer-credit"></p>
+      <p class="footer-links"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/live-editor.js"></script>
+
+<script>
+  fetch('https://davidstein.us/shared/footer.json')
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('footer-production');
+      el.querySelector('.footer-credit').textContent = `${data.credit}…`;
+
+      const linksEl = el.querySelector('.footer-links');
+      data.links.forEach((link, i) => {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'sep';
+          sep.textContent = '·';
+          linksEl.appendChild(sep);
+        }
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.textContent = link.label;
+        linksEl.appendChild(a);
+      });
+
+      el.hidden = false;
+    })
+    .catch(() => {});
+</script>
+
+</body>
+</html>

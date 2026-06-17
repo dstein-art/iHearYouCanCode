@@ -16,8 +16,6 @@
     <span class="material-symbols-outlined" style="font-size:20px;">home</span>
   </a>
   <span class="sep">·</span>
-  <a href="#">About</a>
-  <span class="sep">·</span>
   <a href="getting-started.html">Getting Started</a>
   <span class="sep">·</span>
   <a href="oscillators.html">Oscillators</a>
@@ -26,11 +24,9 @@
   <span class="sep">·</span>
   <a href="audioAnalysis.html" style="color:var(--accent);">Analysis</a>
   <span class="sep">·</span>
-  <a href="#">Resources</a>
+  <a href="effects.html">Effects</a>
   <span class="sep">·</span>
-  <a href="#">Community</a>
-  <span class="sep">·</span>
-  <a href="#" style="color:var(--accent2);">Get Involved ↗</a>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
 <!-- ── Compact hero ── -->
@@ -50,180 +46,109 @@
 <div class="page">
 
   <div class="note">
-    This track follows the
-    <a href="https://colonelpanix.notion.site/Code-2-Week-2-Sound-Module-Review-p5-Sound-75c1fa2e49d983e4a70981ac8a227976" target="_blank" rel="noopener">Visualizing Sound</a>
-    section from Code 2 Week 2. Do <a href="getting-started.html">Getting Started</a> and
-    <a href="oscillators.html">Oscillators</a> first if you're new here.
+    Haven't set things up yet? Do <a href="getting-started.html">Getting Started</a> first —
+    it shows you how to add p5.js, p5.sound, and ProControls.
   </div>
 
-  <h2>1. Map oscillator frequencies to the screen</h2>
+  <h2>1. Visualize amplitude with a circle</h2>
   <p class="desc">
-    Start with several sine oscillators at random pitches. Each frame, draw a green line where
-    that oscillator's frequency lands on the canvas — low notes near the bottom, high notes near the top.
-    Click to pick new random frequencies.
-  </p>
-  <p class="desc">
-    This is the ground truth: you <em>know</em> what frequencies you're playing because you set them
-    with <code>osc.freq()</code>. Later you'll try to figure out frequencies just by listening and analyzing.
+    The simplest thing you can do with audio analysis is measure how <strong>loud</strong> the sound
+    is at any moment — that's called <strong>amplitude</strong>. <code>p5.Amplitude</code> listens
+    to the audio and gives you a number between <code>0</code> (silence) and <code>1</code> (max
+    volume) each frame via <code>getLevel()</code>. Map that number to the size of a circle and
+    you've got a visualizer. Click the preview to start the music.
   </p>
 
   <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
       <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var oscCount = 5;
-var allOscs = [];
-var minFreq = 100;
-var maxFreq = 800;
-
-function setup() {
-  createCanvas(300, 300);
-  for (var i = 0; i < oscCount; i++) {
-    var osc = new p5.Oscillator('sine');
-    osc.freq(random(minFreq, maxFreq));
-    osc.amp(1.0 / oscCount);
-    osc.start();
-    allOscs.push(osc);
-  }
-}
-
-function draw() {
-  background(30);
-  stroke(80, 220, 120);
-  for (var i = 0; i < allOscs.length; i++) {
-    var drawY = map(allOscs[i].f, minFreq, maxFreq, height, 0);
-    line(0, drawY, width, drawY);
-  }
-}
-
-function mousePressed() {
-  userStartAudio();
-  for (var i = 0; i < oscCount; i++) {
-    allOscs[i].freq(random(minFreq, maxFreq));
-  }
-}</textarea>
-    </div>
-    <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Oscillator frequency map preview"></iframe>
-    </div>
-  </div>
-
-  <h2>2. Analyze frequencies with p5.FFT</h2>
-  <p class="desc">
-    Given any audio signal, how do you recover the frequencies inside it? A
-    <strong>Fast Fourier Transform</strong> (<code>p5.FFT</code>) breaks sound into chunks of the
-    frequency spectrum. Call <code>fft.analyze()</code> each frame, then use
-    <code>fft.getEnergy(hz)</code> to ask how loud a frequency range is.
-  </p>
-  <p class="desc">
-    Grey bars show what the FFT guesses. Green lines show the real oscillator frequencies.
-    They mostly match — but FFT results are a bit <em>chunky</em> because the algorithm uses
-    evenly-spaced bins instead of exact pitch numbers.
-  </p>
-
-  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
-    <div class="live-editor">
-      <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var oscCount = 5;
-var allOscs = [];
-var fft;
-var minFreq = 100;
-var maxFreq = 800;
-
-function setup() {
-  createCanvas(300, 300);
-  for (var i = 0; i < oscCount; i++) {
-    var osc = new p5.Oscillator('sine');
-    osc.freq(random(minFreq, maxFreq));
-    osc.amp(1.0 / oscCount);
-    osc.start();
-    allOscs.push(osc);
-  }
-  fft = new p5.FFT();
-}
-
-function draw() {
-  background(30);
-  fft.analyze();
-  stroke(160, 160, 170);
-  for (var hz = minFreq; hz < maxFreq; hz++) {
-    var drawY = map(hz, minFreq, maxFreq, height, 0);
-    var val = fft.getEnergy(hz);
-    var lineW = map(val, 0, 255, 0, width);
-    line(0, drawY, lineW, drawY);
-  }
-  stroke(80, 220, 120);
-  for (var j = 0; j < allOscs.length; j++) {
-    var y = map(allOscs[j].f, minFreq, maxFreq, height, 0);
-    line(0, y, width, y);
-  }
-}
-
-function mousePressed() {
-  userStartAudio();
-  for (var i = 0; i < oscCount; i++) {
-    allOscs[i].freq(random(minFreq, maxFreq));
-  }
-}</textarea>
-    </div>
-    <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="FFT getEnergy preview"></iframe>
-    </div>
-  </div>
-
-  <h2>3. Draw the frequency spectrum</h2>
-  <p class="desc">
-    Any sound — not just oscillators — can be drawn as a bar graph across the frequency spectrum.
-    Load a sound file, loop it, and use the values from <code>fft.analyze()</code> directly.
-    Each bar is one FFT bin: low bins on the left, high bins on the right.
-  </p>
-  <p class="desc">
-    You can change the number of bins in the constructor — it must be a power of 2
-    (64, 128, 256, 512, or 1024). Fewer bins = chunkier but faster to draw.
-  </p>
-
-  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
-    <div class="live-editor">
-      <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var beat, fft;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+      <textarea class="live-code" spellcheck="false">var song, amp;
+var SOUND_URL = '/assets/HitTheFloor-hf.mp3';
 
 function preload() {
-  beat = loadSound(SOUND_URL);
+  song = loadSound(SOUND_URL);
 }
 
 function setup() {
   createCanvas(300, 300);
-  fft = new p5.FFT(0.5, 64);
+  amp = new p5.Amplitude();
 }
 
 function mousePressed() {
   userStartAudio();
-  if (!beat.isLoaded()) return;
-  if (beat.isPlaying()) {
-    beat.stop();
+  if (song.isPlaying()) {
+    song.stop();
   } else {
-    beat.loop();
+    song.loop();
   }
 }
 
 function draw() {
   background(30);
-  if (!beat.isPlaying()) {
-    fill(136, 170, 204);
-    noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(13);
-    text('Click to loop', width / 2, height / 2);
-    return;
-  }
+  var level = amp.getLevel();
+  var r = map(level, 0, 1, 0, width);
   noStroke();
   fill(100, 180, 255);
-  var bins = fft.analyze();
-  for (var i = 0; i < bins.length; i++) {
-    var drawY = map(i, 0, bins.length, 0, height);
-    var barW = map(bins[i], 0, 255, 0, width);
-    var barH = height / bins.length;
-    rect(0, drawY, barW, barH);
+  ellipse(width / 2, height / 2, r);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Amplitude circle preview"></iframe>
+    </div>
+  </div>
+
+  <h3>How it works</h3>
+  <p class="desc">
+    <code>new p5.Amplitude()</code> created in <code>setup()</code> automatically listens to
+    everything your sketch is playing. Each frame in <code>draw()</code>,
+    <code>amp.getLevel()</code> returns the current loudness as a number between 0 and 1.
+    <code>map(level, 0, 1, 0, width)</code> stretches that tiny number into a pixel size — so
+    silence gives a dot and a loud beat fills the canvas.
+  </p>
+
+  <h2>2. Draw a frequency spectrum with p5.FFT</h2>
+  <p class="desc">
+    Amplitude tells you how loud, but not <em>what</em> is playing. A
+    <strong>Fast Fourier Transform</strong> breaks the sound apart into frequency slices — low
+    bass on the left, high treble on the right. <code>p5.FFT</code> does this for you.
+    Call <code>fft.analyze()</code> each frame and you get back an array of values (0–255),
+    one per frequency bin. Draw a bar for each bin and you have a classic spectrum display.
+    Click the preview to start the music.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var song, fft;
+var SOUND_URL = '/assets/HitTheFloor-hf.mp3';
+
+function preload() {
+  song = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+  fft = new p5.FFT(0.8, 64);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (song.isPlaying()) {
+    song.stop();
+  } else {
+    song.loop();
+  }
+}
+
+function draw() {
+  background(30);
+  var spectrum = fft.analyze();
+  var barW = width / spectrum.length;
+  noStroke();
+  for (var i = 0; i < spectrum.length; i++) {
+    var barH = map(spectrum[i], 0, 255, 0, height);
+    fill(100, 180, 255);
+    rect(i * barW, height - barH, barW - 1, barH);
   }
 }</textarea>
     </div>
@@ -232,170 +157,164 @@ function draw() {
     </div>
   </div>
 
-  <h2>4. Draw the waveform</h2>
+  <h3>How it works</h3>
   <p class="desc">
-    <code>fft.waveform()</code> looks at a tiny slice of time instead of frequency.
-    It returns values between -1 and 1 — the shape of the wave at this moment.
-    Connect the dots to draw the classic squiggly line you see in audio editors.
+    <code>new p5.FFT(0.8, 64)</code> creates an FFT analyser. The first number
+    (<code>0.8</code>) is <strong>smoothing</strong> — higher values make the bars rise and fall
+    more slowly, which looks nicer. The second number (<code>64</code>) is how many
+    <strong>bins</strong> (bars) to use; it must be a power of 2. More bins = more detail,
+    but slower to draw.
+  </p>
+  <p class="desc">
+    Each frame, <code>fft.analyze()</code> returns an array of 64 numbers. The loop draws one
+    rectangle per bin: <code>i * barW</code> positions it across the canvas, and
+    <code>map(spectrum[i], 0, 255, 0, height)</code> sets its height. Drawing from the bottom up
+    with <code>height - barH</code> gives the classic equaliser look.
+  </p>
+
+  <h2>3. Five frequency bands as circles</h2>
+  <p class="desc">
+    Instead of drawing every bin, you can ask the FFT for the energy in named frequency ranges.
+    <code>fft.getEnergy("bass")</code> returns a single number (0–255) representing how much
+    low-end power is in the signal right now. p5.FFT has five built-in ranges:
+    <code>"bass"</code>, <code>"lowMid"</code>, <code>"mid"</code>, <code>"highMid"</code>,
+    and <code>"treble"</code>. Draw one circle per band and each one pulses to its own part of
+    the music. Click the preview to start.
   </p>
 
   <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
       <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var beat, fft;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+      <textarea class="live-code" spellcheck="false">var song, fft;
+var SOUND_URL = '/assets/HitTheFloor-hf.mp3';
+
+var bands = ['bass', 'lowMid', 'mid', 'highMid', 'treble'];
+var colors = [
+  [255,  80,  80],
+  [255, 160,  60],
+  [ 80, 220, 120],
+  [ 80, 180, 255],
+  [180,  80, 255]
+];
 
 function preload() {
-  beat = loadSound(SOUND_URL);
+  song = loadSound(SOUND_URL);
 }
 
 function setup() {
   createCanvas(300, 300);
-  fft = new p5.FFT();
+  fft = new p5.FFT(0.8);
 }
 
 function mousePressed() {
   userStartAudio();
-  if (!beat.isLoaded()) return;
-  if (beat.isPlaying()) {
-    beat.stop();
+  if (song.isPlaying()) {
+    song.stop();
   } else {
-    beat.loop();
+    song.loop();
   }
 }
 
 function draw() {
   background(30);
-  if (!beat.isPlaying()) {
-    fill(136, 170, 204);
+  fft.analyze();
+  var cx = width / 2;
+  var cy = height / 2;
+  for (var i = 0; i < bands.length; i++) {
+    var energy = fft.getEnergy(bands[i]);
+    var r = map(energy, 0, 255, 10, 120);
     noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(13);
-    text('Click to loop', width / 2, height / 2);
-    return;
+    fill(colors[i][0], colors[i][1], colors[i][2], 180);
+    ellipse(cx, cy, r * 2);
   }
-  stroke(100, 180, 255);
-  noFill();
-  var waveform = fft.waveform();
-  beginShape();
-  for (var i = 0; i < waveform.length; i++) {
-    var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], -1, 1, height, 0);
-    vertex(x, y);
-  }
-  endShape();
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Waveform preview"></iframe>
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Frequency bands preview"></iframe>
     </div>
   </div>
 
-  <h2>5. Build a spectrogram</h2>
+  <h3>How it works</h3>
   <p class="desc">
-    A <strong>spectrogram</strong> shows how frequencies change over time. Each column is one
-    snapshot of the spectrum; scroll across the screen to paint a history — brighter means louder
-    at that frequency.
+    You must call <code>fft.analyze()</code> once per frame before calling
+    <code>getEnergy()</code> — it updates the internal snapshot that <code>getEnergy</code>
+    reads from. Each band name maps to a fixed Hz range: bass is the lowest frequencies,
+    treble is the highest. The circles are drawn on top of each other from largest to smallest
+    so all five are always visible. The <code>180</code> alpha value makes them slightly
+    transparent so the layers blend together.
   </p>
+
+  <h2>4. Beat detection with p5.PeakDetect</h2>
   <p class="desc">
-    This is the slit-scan technique from the Week 2 notes: use bin values as fill color and step
-    across the canvas one column at a time.
+    p5.sound has a built-in beat detector called <code>p5.PeakDetect</code>. You tell it which
+    frequency range to watch and it handles the averaging and threshold logic for you. Each frame,
+    check <code>peakDetect.isDetected</code> — it's <code>true</code> on the exact frame a beat
+    hits, and <code>false</code> every other frame. Click to start.
   </p>
 
   <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
       <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var beat, fft;
-var xoff = 0;
-var xstep = 2;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+      <textarea class="live-code" spellcheck="false">var song, fft, peakDetect;
+var SOUND_URL = '/assets/HitTheFloor-hf.mp3';
+var radius = 0;
 
 function preload() {
-  beat = loadSound(SOUND_URL);
+  song = loadSound(SOUND_URL);
 }
 
 function setup() {
   createCanvas(300, 300);
-  fft = new p5.FFT(0.5, 64);
-  background(0);
+  fft = new p5.FFT();
+  peakDetect = new p5.PeakDetect(20, 200);
 }
 
 function mousePressed() {
   userStartAudio();
-  if (!beat.isLoaded()) return;
-  if (beat.isPlaying()) {
-    beat.stop();
+  if (song.isPlaying()) {
+    song.stop();
   } else {
-    beat.loop();
-    background(0);
-    xoff = 0;
+    song.loop();
   }
 }
 
 function draw() {
-  if (!beat.isPlaying()) {
-    fill(136, 170, 204);
-    noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(13);
-    text('Click to loop', width / 2, height / 2);
-    return;
+  background(30);
+  fft.analyze();
+  peakDetect.update(fft);
+
+  if (peakDetect.isDetected) {
+    radius = 130;
+  } else {
+    radius *= 0.85;
   }
+
   noStroke();
-  var bins = fft.analyze();
-  for (var i = 0; i < bins.length; i++) {
-    var drawY = map(i, 0, bins.length, 0, height);
-    var barH = height / bins.length;
-    fill(bins[i]);
-    rect(xoff, drawY, xstep, barH);
-  }
-  xoff += xstep;
-  if (xoff > width) xoff = 0;
+  fill(255, 80, 80);
+  ellipse(width / 2, height / 2, radius * 2);
+
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(16);
+  text(peakDetect.isDetected ? 'BEAT' : '', width / 2, height / 2);
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Spectrogram preview"></iframe>
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Beat detection preview"></iframe>
     </div>
   </div>
 
-  <h3>Analyzing loudness with p5.Amplitude</h3>
+  <h3>How it works</h3>
   <p class="desc">
-    Before FFT, there's an even simpler question: how loud is the signal right now?
-    <code>p5.Amplitude</code> averages a short slice of the wave and returns a level from 0 to 1
-    with <code>getLevel()</code>. Hook it up with <code>amp.setInput(mic)</code> or
-    <code>amp.setInput(soundFile)</code>.
-  </p>
-  <pre><code><span class="kw">var</span> mic, amp;
-
-mic = <span class="kw">new</span> <span class="fn">p5.AudioIn</span>();
-mic.<span class="fn">start</span>();
-
-amp = <span class="kw">new</span> <span class="fn">p5.Amplitude</span>();
-amp.<span class="fn">setInput</span>(mic);
-
-<span class="kw">var</span> level = amp.<span class="fn">getLevel</span>();
-<span class="cmt">// map level to the height of a bar in draw()</span></code></pre>
-  <p class="desc">
-    For microphone sketches, call <code>fft.setInput(mic)</code> or <code>amp.setInput(mic)</code>
-    so analysis follows the mic instead of the sketch's main output.
-    Mic access may not work inside the live preview — run in the
-    <a href="https://editor.p5js.org/" target="_blank" rel="noopener">p5.js Editor</a> and allow
-    microphone permission.
-  </p>
-
-  <h3>Handy FFT methods</h3>
-  <ul class="desc-list">
-    <li><code>fft.analyze()</code> — frequency spectrum array (0–255 per bin)</li>
-    <li><code>fft.waveform()</code> — time-domain wave shape (-1 to 1)</li>
-    <li><code>fft.getEnergy(hz)</code> or <code>getEnergy('bass')</code> — energy at one frequency or range</li>
-    <li><code>fft.setInput(source)</code> — analyze a specific sound or mic instead of the main output</li>
-    <li><code>new p5.FFT(smoothing, bins)</code> — smoothing 0–1; bins must be a power of 2</li>
-  </ul>
-  <p class="desc">
-    See the
-    <a href="https://p5js.org/reference/p5.sound/p5.FFT/" target="_blank" rel="noopener">p5.FFT reference</a>
-    and the full
-    <a href="https://colonelpanix.notion.site/Code-2-Week-2-Sound-Module-Review-p5-Sound-75c1fa2e49d983e4a70981ac8a227976" target="_blank" rel="noopener">Week 2 Sound Module Review</a>.
+    <code>new p5.PeakDetect(20, 200)</code> watches the frequency range from 20 Hz to 200 Hz —
+    the bass band where kick drums live. You must call <code>fft.analyze()</code> first, then
+    <code>peakDetect.update(fft)</code> to feed it fresh data each frame. When a spike is
+    detected, <code>peakDetect.isDetected</code> flips to <code>true</code> for one frame only.
+    The circle snaps to full size on that frame, then shrinks each frame with
+    <code>radius *= 0.85</code> until the next hit. You can tune the detector with two extra
+    arguments: <code>new p5.PeakDetect(20, 200, threshold, framesPerPeak)</code> — lower the
+    threshold (default 0.35) to catch quieter beats, or raise <code>framesPerPeak</code>
+    (default 20) to ignore rapid double-hits.
   </p>
 
 </div>

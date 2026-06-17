@@ -16,8 +16,6 @@
     <span class="material-symbols-outlined" style="font-size:20px;">home</span>
   </a>
   <span class="sep">·</span>
-  <a href="#">About</a>
-  <span class="sep">·</span>
   <a href="getting-started.html">Getting Started</a>
   <span class="sep">·</span>
   <a href="oscillators.html">Oscillators</a>
@@ -26,11 +24,9 @@
   <span class="sep">·</span>
   <a href="audioAnalysis.html">Analysis</a>
   <span class="sep">·</span>
-  <a href="#">Resources</a>
+  <a href="effects.html">Effects</a>
   <span class="sep">·</span>
-  <a href="#">Community</a>
-  <span class="sep">·</span>
-  <a href="#" style="color:var(--accent2);">Get Involved ↗</a>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
 <!-- ── Compact hero ── -->
@@ -51,7 +47,7 @@
 
   <div class="note">
     Haven't set things up yet? Do <a href="getting-started.html">Getting Started</a> first —
-    it shows you how to add p5.js and p5.sound.
+    it shows you how to add p5.js, p5.sound, and ProControls.
   </div>
 
   <h2>1. Load a sound file</h2>
@@ -62,18 +58,19 @@
     Click the canvas to play it.
   </p>
   <p class="desc">
-    The examples below use a short sample hosted online. When you build your own sketch,
-    put audio files in your project folder and use a path like <code>'sounds/beat.mp3'</code>.
+    The examples below use an audio file stored in the project's <code>/assets</code> folder.
+    When you build your own sketch, put audio files in your project folder and use a path
+    like <code>'sounds/beat.mp3'</code>.
   </p>
 
   <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
       <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var roar;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+      <textarea class="live-code" spellcheck="false">var song;
+var SOUND_URL = '/assets/HitTheFloor-hf.mp3';
 
 function preload() {
-  roar = loadSound(SOUND_URL);
+  song = loadSound(SOUND_URL);
 }
 
 function setup() {
@@ -82,8 +79,10 @@ function setup() {
 
 function mousePressed() {
   userStartAudio();
-  if (roar.isLoaded()) {
-    roar.play();
+  if (!song.isPlaying()) {
+    song.play();
+  } else {
+    song.stop();
   }
 }
 
@@ -93,11 +92,7 @@ function draw() {
   noStroke();
   textAlign(CENTER, CENTER);
   textSize(13);
-  if (roar.isLoaded()) {
-    text('Click to play', width / 2, height / 2);
-  } else {
-    text('Loading…', width / 2, height / 2);
-  }
+  text('Click to play', width / 2, height / 2);
 }</textarea>
     </div>
     <div class="example-preview">
@@ -107,247 +102,71 @@ function draw() {
 
   <h3>Loading takes time</h3>
   <p class="desc">
-    Audio files don't appear instantly. <code>loadSound()</code> fetches the file in the background.
-    Use <code>isLoaded()</code> to check if it's ready before you call <code>play()</code>.
-    If you try to play too early, nothing happens.
+    Audio files don't appear instantly — <code>loadSound()</code> fetches the file in the
+    background. The code checks <code>isPlaying()</code> to decide whether to play or stop,
+    but it's also common to guard with <code>isLoaded()</code> to make sure the file is
+    ready before you call <code>play()</code>. If you try to play too early, nothing happens.
   </p>
 
-  <h2>2. Control volume and stop playback</h2>
+  <h2>2. Control volume and playback speed</h2>
   <p class="desc">
-    Use <code>amp()</code> to set how loud the sound is — from <code>0</code> (silent) to
-    <code>1</code> (full volume). Move the mouse up and down while the sound plays.
-    Click to start; click again to <code>stop()</code> it.
-    <code>isPlaying()</code> tells you if the sound is going right now.
+    Use <code>amp()</code> to change the volume and <code>rate()</code> to change how fast
+    the sound plays. Here an <code>IconButton</code> from ProControls toggles the song on and
+    off, and a <code>MultiSlider</code> gives you two knobs — one for volume, one for speed.
+    Drag a slider while the song is playing to hear the difference in real time.
   </p>
 
   <div class="example-row" data-canvas-w="300" data-canvas-h="300">
     <div class="live-editor">
       <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var roar;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+      <textarea class="live-code" spellcheck="false">var song;
+var SOUND_URL = '/assets/HitTheFloor-hf.mp3';
 
 function preload() {
-  roar = loadSound(SOUND_URL);
+  song = loadSound(SOUND_URL);
 }
 
-function setup() {
-  createCanvas(300, 300);
-}
-
-function mousePressed() {
-  userStartAudio();
-  if (!roar.isLoaded()) return;
-  if (roar.isPlaying()) {
-    roar.stop();
-  } else {
-    roar.play();
-    updateVolume();
-  }
-}
-
-function mouseMoved() {
-  updateVolume();
-}
-
-function updateVolume() {
-  if (!roar.isPlaying()) return;
-  var vol = map(mouseY, 0, height, 1, 0);
-  roar.amp(vol, 0.05);
-}
-
-function draw() {
-  background(30);
-  fill(136, 170, 204);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  textSize(13);
-  if (roar.isPlaying()) {
-    text('Playing — move up/down for volume', width / 2, height / 2 - 8);
-    text('Click to stop', width / 2, height / 2 + 14);
-  } else {
-    text('Click to play', width / 2, height / 2);
-  }
-}</textarea>
-    </div>
-    <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Volume control preview"></iframe>
-    </div>
-  </div>
-
-  <h2>3. Loop a sound</h2>
-  <p class="desc">
-    A <code>loop()</code> repeats a sound over and over — great for beats and background tracks.
-    Click to start looping; click again to <code>stop()</code>.
-    <code>isLooping()</code> tells you if the sound is set to loop.
-  </p>
-
-  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
-    <div class="live-editor">
-      <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var roar;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
-
-function preload() {
-  roar = loadSound(SOUND_URL);
-}
-
-function setup() {
-  createCanvas(300, 300);
-}
-
-function mousePressed() {
-  userStartAudio();
-  if (!roar.isLoaded()) return;
-  if (roar.isPlaying()) {
-    roar.stop();
-  } else {
-    roar.loop();
-  }
-}
-
-function draw() {
-  background(30);
-  fill(136, 170, 204);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  textSize(13);
-  if (roar.isLooping()) {
-    text('Looping — click to stop', width / 2, height / 2);
-  } else {
-    text('Click to loop', width / 2, height / 2);
-  }
-}</textarea>
-    </div>
-    <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Loop preview"></iframe>
-    </div>
-  </div>
-
-  <h2>4. Change playback speed</h2>
-  <p class="desc">
-    <code>rate()</code> changes how fast the sound plays. At <code>1</code> it sounds normal.
-    Higher than <code>1</code> is faster (and higher pitch). Lower than <code>1</code> is slower
-    (and lower pitch). Values below <code>0</code> play the sound backwards.
-    Move the mouse left and right to try different rates while the loop plays.
-  </p>
-
-  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
-    <div class="live-editor">
-      <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">var roar;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
-
-function preload() {
-  roar = loadSound(SOUND_URL);
-}
-
-function setup() {
-  createCanvas(300, 300);
-}
-
-function mousePressed() {
-  userStartAudio();
-  if (!roar.isLoaded()) return;
-  if (roar.isPlaying()) {
-    roar.stop();
-  } else {
-    roar.loop();
-    updateRate();
-  }
-}
-
-function mouseMoved() {
-  updateRate();
-}
-
-function updateRate() {
-  if (!roar.isPlaying()) return;
-  var r = map(mouseX, 0, width, 0.25, 2);
-  roar.rate(r);
-}
-
-function draw() {
-  background(30);
-  fill(136, 170, 204);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  textSize(13);
-  if (roar.isPlaying()) {
-    text('Looping — move left/right for speed', width / 2, height / 2 - 8);
-    text('rate: ' + roar.rate().toFixed(2), width / 2, height / 2 + 14);
-  } else {
-    text('Click to loop', width / 2, height / 2);
-  }
-}</textarea>
-    </div>
-    <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Playback rate preview"></iframe>
-    </div>
-  </div>
-
-  <h2>5. Use ProControls for play and volume</h2>
-  <p class="desc">
-    Swap click-to-play for on-screen controls. An <code>IconButton</code> toggles play and stop.
-    A <code>MultiSlider</code> sets volume. Call <code>userStartAudio()</code> when the player
-    touches a control, and call <code>proControlBackground()</code> in <code>draw()</code>.
-  </p>
-
-  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
-    <div class="live-editor">
-      <div class="live-hint">Try editing the code — the preview updates as you type</div>
-      <textarea class="live-code" spellcheck="false">ControlStyle = 'black';
-
-var roar;
-var SOUND_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
-
-function preload() {
-  roar = loadSound(SOUND_URL);
-}
+var playBtn;
 
 function setup() {
   createCanvas(300, 300);
 
-  new IconButton({
-    x: 20, y: 20,
+  playBtn = new IconButton({
+    x: 10, y: 10,
     icon: 'play_arrow',
-    label: 'PLAY',
-    onPress: () => {
+    toggle: true,
+    onClick: (_, btn) => {
       userStartAudio();
-      if (!roar.isLoaded()) return;
-      if (roar.isPlaying()) {
-        roar.stop();
+      if (btn.state) {
+        song.loop();
+        btn.icon = 'stop';
       } else {
-        roar.play();
+        song.stop();
+        btn.icon = 'play_arrow';
       }
     },
   });
 
   new MultiSlider({
-    x: 20, y: 80,
+    x: 75, y: 10,
     height: 130,
     sliders: {
-      'VOL': { value: 0.8, min: 0, max: 1, width: 70, readout: 'db' },
+      'VOL':   { value: 0.5,    min: 0,    max: 1, width: 50, readout: 'db' },
+      'SPEED': { value: 1,    min: 0.25, max: 2, width: 50, readout: 'raw', decimals: 2 },
     },
     onChange: (v) => {
-      userStartAudio();
-      if (roar.isLoaded()) roar.amp(v.VOL, 0.05);
+      song.amp(v.VOL, 0.05);
+      song.rate(v.SPEED);
     },
   });
 }
 
 function draw() {
   proControlBackground();
-  fill(136, 170, 204);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  textSize(12);
-  if (roar.isLoaded() && roar.isPlaying()) {
-    text('Playing', width / 2, height - 14);
-  }
 }</textarea>
     </div>
     <div class="example-preview">
-      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="ProControls sample preview"></iframe>
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Volume control preview"></iframe>
     </div>
   </div>
 
@@ -368,6 +187,226 @@ function draw() {
     See the
     <a href="https://p5js.org/reference/p5.sound/p5.SoundFile/" target="_blank" rel="noopener">p5.SoundFile reference</a>.
   </p>
+
+  <h2>3. Build a sample pad</h2>
+  <p class="desc">
+    A sample pad is a set of buttons — press one and it immediately plays a sound, like
+    the pads on a real drum machine. Each button is wired to one audio file, so you can
+    tap out patterns in real time. This example uses <code>GridPad</code> from ProControls
+    with <code>mode:"button"</code>, which means pads fire when you press them but don't
+    stay lit up — perfect for a performance-style pad.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">let samples=["/assets/superdirt/000_BD.wav",
+  "/assets/superdirt/001_CB.wav",
+  "/assets/superdirt/002_FX.wav",
+  "/assets/superdirt/003_HH.wav",
+  "/assets/superdirt/004_OH.wav",
+  "/assets/superdirt/005_P1.wav",
+  "/assets/superdirt/006_P2.wav",
+  "/assets/superdirt/007_SN.wav"];
+
+let drums=[];
+function preload() {
+  for (let i = 0; i < samples.length; i++) {
+    drums.push(loadSound(samples[i]));
+  }
+}
+      
+function setup() {
+  createCanvas(300, 300);
+  new GridPad({label:"Click To Play",rows:2, cols:4,cellSize:60,mode:"button", onChange: gridChanged});
+}
+
+function gridChanged(data1,data2) {
+  let index=data1.r*4+data1.c;
+  if (data1.state=="on") {
+    drums[index].play();
+  }
+}
+
+function draw() {
+  background(30);
+}
+      </textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Sample pad preview"></iframe>
+    </div>
+  </div>
+
+  <h3>Loading the sounds</h3>
+  <p class="desc">
+    The <code>samples</code> array holds the file path for each drum sound. Inside
+    <code>preload()</code>, a loop calls <code>loadSound()</code> on every path and pushes
+    the result into the <code>drums</code> array. By the time <code>setup()</code> runs,
+    all eight sounds are loaded and ready to go.
+  </p>
+
+  <h3>The pad — mode:"button"</h3>
+  <p class="desc">
+    <code>new GridPad({rows:2, cols:4, cellSize:60, mode:"button"})</code> draws a
+    2&times;4 grid of eight pads. <code>mode:"button"</code> is the key difference from
+    the sequencer below — pressing a pad triggers it once and it immediately goes dark
+    again, just like a real drum pad. There's no on/off toggle; every press is a fresh hit.
+  </p>
+
+  <h3>Reacting to a press — onChange</h3>
+  <p class="desc">
+    Every time you press a pad, <code>onChange</code> fires and receives an object with
+    three things: <code>data1.r</code> (which row, 0 or 1), <code>data1.c</code> (which
+    column, 0–3), and <code>data1.state</code> (<code>"on"</code> when the pad is first
+    pressed). The line <code>let index = data1.r * 4 + data1.c</code> converts that row
+    and column into a single number between 0 and 7 — the position of the right sound in
+    the <code>drums</code> array. When <code>state</code> is <code>"on"</code>,
+    <code>drums[index].play()</code> fires the sound.
+  </p>
+
+  <div class="note">
+    <strong>Want to loop sounds instead of playing them once?</strong>
+    Replace <code>gridChanged</code> with this version and change <code>mode</code> from <code>"button"</code> to <code>"toggle"</code> — pressing a pad starts the loop,
+    pressing it again stops it:
+    <pre style="margin-top:10px;"><code>function gridChanged(data1, data2) {
+  let index = data1.r * 4 + data1.c;
+  if (data1.value == 1) {
+    drums[index].loop();
+  } else if (data1.value == 0) {
+    drums[index].stop();
+  }
+}</code></pre>
+  </div>
+
+  <h2>4. Build a drum machine with GridPad</h2>
+  <p class="desc">
+    A step sequencer is basically a drum machine. Imagine a grid where each
+    <strong>row</strong> is a different drum sound and each <strong>column</strong> is a moment
+    in time. Click a cell to switch it on — when the sequencer reaches that column, that drum
+    plays. Click it again to switch it off.
+  </p>
+  <p class="desc">
+    <code>GridPad</code> from ProControls draws the whole grid for you and handles all the
+    clicking. You just tell it how many rows and columns you want. The preview on the right
+    shows a finished sequencer — try clicking the cells to build a beat.
+  </p>
+
+  <div class="example-row" data-canvas-w="450" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">let samples=  [{name:"BD",url:"/assets/superdirt/000_BD.wav"},
+    {name:"CB",url:"/assets/superdirt/001_CB.wav"},
+    {name:"FX",url:"/assets/superdirt/002_FX.wav"},
+    {name:"HH",url:"/assets/superdirt/003_HH.wav"},
+    {name:"OH",url:"/assets/superdirt/004_OH.wav"},
+    {name:"P1",url:"/assets/superdirt/005_P1.wav"},
+    {name:"P2",url:"/assets/superdirt/006_P2.wav"},
+  {name:"SN",url:"/assets/superdirt/007_SN.wav"}];
+      
+let drums=[];
+let colCount=16;
+
+let beatCounter=-1;
+let lastBeat=-1;
+
+let myGrid;
+
+function preload() {
+  for (let i = 0; i < samples.length; i++) {
+    drums.push(loadSound(samples[i].url));
+  }
+}
+      
+function setup() {
+  createCanvas(450, 300);
+  openStatusPanel();
+  myGrid=new GridPad({label:"Drum Sequencer",rows:8,hGroup:4, cols:16,mode:"toggle"});
+}
+
+function nextBeat() {
+  if (lastBeat>=0) {
+    myGrid.highlightCol(lastBeat,false);
+  }
+  beatCounter=(beatCounter+1)%colCount;
+  myGrid.highlightCol(beatCounter,true);
+  lastBeat=beatCounter;
+}
+
+function playBeat(aBeat) {
+  for (let i=0; i< drums.length; i++) {
+    if (myGrid.getValue(i, aBeat)==1) {
+      drums[i].play();
+    }
+  }
+}
+
+const pingTimer = setInterval(() => {
+  if (!myGrid) return;
+  nextBeat();
+  playBeat(beatCounter);
+}, 250);
+
+function draw() {
+  background(30);
+}
+      </textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="450" height="300" scrolling="no" title="GridPad step sequencer"></iframe>
+    </div>
+  </div>
+
+  <h3>The grid — GridPad</h3>
+  <p class="desc">
+    <code>new GridPad({rows:8, cols:16, mode:"toggle"})</code> creates an 8&times;16 button grid.
+    <code>mode:"toggle"</code> means every click flips a cell between on (lit) and off (dark).
+    <code>hGroup:4</code> draws faint divider lines every 4 columns so you can count beats easily.
+    You don't write any drawing code — GridPad handles all of it automatically.
+  </p>
+
+  <h3>The timer — setInterval</h3>
+  <p class="desc">
+    <code>setInterval(() =&gt; { ... }, 250)</code> runs a chunk of code every 250 milliseconds —
+    that's four times per second, which feels like a steady beat at 60 BPM.
+    Each time it fires it calls <code>nextBeat()</code> to move the playhead one step to the
+    right, then <code>playBeat()</code> to check which drums should play on that step.
+    Want it faster? Lower the number. Slower? Raise it.
+  </p>
+  <p class="desc">
+    There's one small catch: the timer starts the moment the page loads, but the grid
+    doesn't exist yet — it only gets created inside <code>setup()</code>, which runs
+    after all the samples have finished downloading. The line
+    <code>if (!myGrid) return;</code> inside the timer is a safety check: if the grid
+    isn't ready yet, just skip this tick and wait until it is.
+  </p>
+
+  <h3>Reading the grid — getValue</h3>
+  <p class="desc">
+    <code>myGrid.getValue(row, col)</code> returns <code>1</code> if that cell is lit up, or
+    <code>0</code> if it's dark. <code>playBeat()</code> loops through every row and plays the
+    drum sound for that row only when the value is <code>1</code>. That's the whole playback
+    engine — just a loop and a number check.
+  </p>
+
+  <h3>Moving the playhead — highlightCol</h3>
+  <p class="desc">
+    <code>myGrid.highlightCol(col, true)</code> draws a glowing outline around that column so
+    you can see where the sequencer is. <code>nextBeat()</code> turns the highlight off on the
+    old column, adds one to <code>beatCounter</code> (wrapping back to 0 after column 15), then
+    turns the highlight on for the new column.
+  </p>
+
+  <h3>Key GridPad options</h3>
+  <ul class="desc-list">
+    <li><code>rows</code> / <code>cols</code> — how many rows and columns the grid has</li>
+    <li><code>mode: 'toggle'</code> — each click flips a cell on or off</li>
+    <li><code>hGroup: 4</code> — draw a divider line every 4 columns to mark beats</li>
+    <li><code>label</code> — text that appears beneath the grid</li>
+    <li><code>onChange(values)</code> — a function that runs every time any cell is clicked; <code>values</code> is the full grid as a 2D array of 0s and 1s</li>
+    <li><code>myGrid.getValue(row, col)</code> — returns <code>1</code> if that cell is on, <code>0</code> if off</li>
+    <li><code>myGrid.highlightCol(col, true/false)</code> — turn the playhead highlight on or off for a column</li>
+  </ul>
 
 </div>
 

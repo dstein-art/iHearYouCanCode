@@ -15,15 +15,17 @@
     <span class="material-symbols-outlined" style="font-size:20px;">home</span>
   </a>
   <span class="sep">·</span>
-  <a href="#">About</a>
-  <span class="sep">·</span>
   <a href="getting-started.html">Getting Started</a>
   <span class="sep">·</span>
-  <a href="#">Resources</a>
+  <a href="oscillators.html">Oscillators</a>
   <span class="sep">·</span>
-  <a href="#">Community</a>
+  <a href="samples.html">Samples</a>
   <span class="sep">·</span>
-  <a href="#" style="color:var(--accent2);">Get Involved ↗</a>
+  <a href="audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
+  <a href="effects.html">Effects</a>
+  <span class="sep">·</span>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
 <!-- ── Hero ── -->
@@ -40,17 +42,16 @@
         from your first oscillator to full generative audio compositions.
       </p>
       <div class="hero-chips">
-        <span class="chip">p5.sound</span>
-        <span class="chip">Web Audio API</span>
-        <span class="chip">open source</span>
-        <a href="#" class="chip chip-link">Notify me when ready →</a>
+        <a href="https://p5js.org" class="chip chip-link" target="_blank" rel="noopener">p5 ↗</a>
+        <a href="https://p5js.org/reference/p5.sound/" class="chip chip-link" target="_blank" rel="noopener">p5.sound ↗</a>
+        <a href="https://procontrols.org" class="chip chip-link" target="_blank" rel="noopener">proControls.org ↗</a>
       </div>
     </div>
     <div class="hero-callout">
-      <div class="hero-callout-eyebrow">Stay in the loop</div>
+      <div class="hero-callout-eyebrow">Coming soon</div>
       <p>
-        This site is a placeholder. Exercises, sketches, and interactive audio experiments are in development.
-        Check back soon or reach out to get involved.
+        Keep an eye on this page for future tutorials on MIDI, Generative Music, and Synthesizers —
+        more tracks are on the way.
       </p>
       <a href="mailto:davidstein@nyu.edu" class="hero-callout-link">davidstein@nyu.edu</a>
     </div>
@@ -90,16 +91,6 @@
     </div>
     <div class="col-card">
       <div class="col-card-header">
-        <h3>Microphone Input</h3>
-        <p>Capture live audio and use amplitude and frequency to drive visuals.</p>
-      </div>
-      <div class="col-card-preview">
-        <span class="material-symbols-outlined">mic</span>
-      </div>
-      <div class="col-card-footer"><a href="#">Coming soon →</a></div>
-    </div>
-    <div class="col-card">
-      <div class="col-card-header">
         <h3>Audio Analysis</h3>
         <p>Visualize waveforms, frequency spectra, spectrograms, and loudness with p5.FFT and p5.Amplitude.</p>
       </div>
@@ -111,46 +102,57 @@
     <div class="col-card">
       <div class="col-card-header">
         <h3>Effects &amp; Filters</h3>
-        <p>Apply reverb, delay, distortion, and filters to shape your sound.</p>
+        <p>Shape your sound with low pass filters, delay, reverb, and more using p5.Filter and p5.Delay.</p>
       </div>
       <div class="col-card-preview">
         <span class="material-symbols-outlined">tune</span>
       </div>
-      <div class="col-card-footer"><a href="#">Coming soon →</a></div>
-    </div>
-    <div class="col-card">
-      <div class="col-card-header">
-        <h3>Generative Audio</h3>
-        <p>Build interactive instruments, sequencers, and algorithmic compositions.</p>
-      </div>
-      <div class="col-card-preview">
-        <span class="material-symbols-outlined">piano</span>
-      </div>
-      <div class="col-card-footer"><a href="#">Coming soon →</a></div>
-    </div>
-    <div class="col-card">
-      <div class="col-card-header">
-        <h3>MIDI</h3>
-        <p>Connect MIDI controllers and instruments to trigger sounds and control parameters with hardware.</p>
-      </div>
-      <div class="col-card-preview">
-        <span class="material-symbols-outlined">piano_off</span>
-      </div>
-      <div class="col-card-footer"><a href="#">Coming soon →</a></div>
+      <div class="col-card-footer"><a href="effects.html">Start tutorial →</a></div>
     </div>
   </div>
 
-  <div style="margin-top:48px;">
-    <div class="placeholder-block">
-      <span class="ph-icon material-symbols-outlined">construction</span>
-      <h2>Full site under construction</h2>
-      <p>
-        Lessons, exercises, and community features are actively being built.
-        Want to contribute or be notified at launch?
-        <a href="mailto:davidstein@nyu.edu" style="color:var(--accent);">Get in touch.</a>
-      </p>
+  <!--
+  <div class="col-card">
+    <div class="col-card-header">
+      <h3>Microphone Input</h3>
+      <p>Capture live audio and use amplitude and frequency to drive visuals.</p>
     </div>
+    <div class="col-card-preview">
+      <span class="material-symbols-outlined">mic</span>
+    </div>
+    <div class="col-card-footer"><a href="#">Coming soon →</a></div>
   </div>
+  <div class="col-card">
+    <div class="col-card-header">
+      <h3>Effects &amp; Filters</h3>
+      <p>Apply reverb, delay, distortion, and filters to shape your sound.</p>
+    </div>
+    <div class="col-card-preview">
+      <span class="material-symbols-outlined">tune</span>
+    </div>
+    <div class="col-card-footer"><a href="#">Coming soon →</a></div>
+  </div>
+  <div class="col-card">
+    <div class="col-card-header">
+      <h3>Generative Audio</h3>
+      <p>Build interactive instruments, sequencers, and algorithmic compositions.</p>
+    </div>
+    <div class="col-card-preview">
+      <span class="material-symbols-outlined">piano</span>
+    </div>
+    <div class="col-card-footer"><a href="#">Coming soon →</a></div>
+  </div>
+  <div class="col-card">
+    <div class="col-card-header">
+      <h3>MIDI</h3>
+      <p>Connect MIDI controllers and instruments to trigger sounds and control parameters with hardware.</p>
+    </div>
+    <div class="col-card-preview">
+      <span class="material-symbols-outlined">piano_off</span>
+    </div>
+    <div class="col-card-footer"><a href="#">Coming soon →</a></div>
+  </div>
+  -->
 
 </div>
 
