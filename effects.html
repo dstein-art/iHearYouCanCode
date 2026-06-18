@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJW4BQ9MM6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KJW4BQ9MM6');
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Effects &amp; Filters — iHearYouCanCode</title>
@@ -183,7 +192,67 @@ function draw() {
     bottom-left for a tight single slap-back echo.
   </p>
 
-  <h2>3. Shape notes with ADSR, reverb, and a low pass filter</h2>
+  <h2>3. Reverb on a snare drum</h2>
+  <p class="desc">
+    <strong>Reverb</strong> simulates the way sound bounces around a physical space — a small
+    room sounds tight and close, a large hall sounds open and washy. <code>p5.Reverb</code>
+    has two main parameters: <strong>duration</strong> (how many seconds the reverb tail lasts)
+    and <strong>decay rate</strong> (how quickly it fades away). Move the mouse left and right
+    to sweep the reverb amount from completely dry to dripping wet. Click to hit the snare.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var snare, reverb;
+var SOUND_URL = '/assets/superdirt/007_SN.wav';
+
+function preload() {
+  snare = loadSound(SOUND_URL);
+}
+
+function setup() {
+  createCanvas(300, 300);
+  reverb = new p5.Reverb();
+  reverb.process(snare, 3, 2);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (snare.isLoaded()) snare.play();
+}
+
+function draw() {
+  background(30);
+
+  var wet = map(mouseX, 0, width, 0, 1);
+  reverb.drywet(wet);
+
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  text('Click to hit the snare', width / 2, height / 2 - 12);
+  textSize(11);
+  text('reverb: ' + wet.toFixed(2), width / 2, height / 2 + 12);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Reverb snare preview"></iframe>
+    </div>
+  </div>
+
+  <h3>How it works</h3>
+  <p class="desc">
+    <code>reverb.process(snare, 3, 2)</code> wires the snare into the reverb and sets its
+    character: <code>3</code> seconds of reverb tail length, and a decay rate of <code>2</code>
+    (higher = faster fade). <code>reverb.drywet()</code> blends between the original dry signal
+    (0) and the fully processed wet signal (1) — all the way left and you hear a crisp, dry
+    snare; all the way right and it blooms into a long, washy reverb tail. Try increasing the
+    duration to <code>6</code> or <code>8</code> seconds for a huge stadium effect.
+  </p>
+
+  <h2>4. Shape notes with ADSR, reverb, and a low pass filter</h2>
   <p class="desc">
     This example combines everything: an oscillator shaped by an <strong>ADSR envelope</strong>,
     a <strong>low pass filter</strong> to control how bright or dull the tone is, and

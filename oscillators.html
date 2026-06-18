@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJW4BQ9MM6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KJW4BQ9MM6');
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Oscillators &amp; Synthesis — iHearYouCanCode</title>
@@ -77,7 +86,7 @@
     waveforms in real time — a great way to see Fourier's idea in action before writing any code.
   </div>
 
-  <h2>1. Click to turn the sound on</h2>
+  <h2>1. Click to start your first Oscillator</h2>
   <p class="desc">
     This sketch makes a tone you turn on and off by clicking the canvas.
     On the first click, call <code>userStartAudio()</code> so the browser allows sound.
