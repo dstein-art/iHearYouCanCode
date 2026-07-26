@@ -35,6 +35,8 @@
   <span class="sep">·</span>
   <a href="effects.html" style="color:var(--accent);">Effects</a>
   <span class="sep">·</span>
+  <a href="midi.html">MIDI</a>
+  <span class="sep">·</span>
   <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
@@ -252,7 +254,92 @@ function draw() {
     duration to <code>6</code> or <code>8</code> seconds for a huge stadium effect.
   </p>
 
-  <h2>4. Shape notes with ADSR, reverb, and a low pass filter</h2>
+  <h2>4. LFO tremolo on a square wave</h2>
+  <p class="desc">
+    An <strong>LFO</strong> (Low Frequency Oscillator) runs below the hearing range — too slow
+    to perceive as a pitch — and is used to automatically wobble a parameter over time. Aimed
+    at volume, it creates a <strong>tremolo</strong> effect: a rhythmic pulse in loudness.
+    Move the mouse left for a slow, gentle pulse; right for a fast flutter. Click to start
+    and stop.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Try editing the code — the preview updates as you type</div>
+      <textarea class="live-code" spellcheck="false">var osc, lfo;
+var playing = false;
+
+function setup() {
+  createCanvas(300, 300);
+
+  osc = new p5.Oscillator('square');
+  osc.freq(220);
+  osc.amp(0.5);
+
+  lfo = new p5.Oscillator('sine');
+  lfo.disconnect();
+  lfo.freq(2);
+  lfo.amp(0.2);
+  lfo.start();
+
+  osc.amp(lfo);
+}
+
+function mousePressed() {
+  userStartAudio();
+  if (playing) {
+    osc.stop();
+    playing = false;
+  } else {
+    osc.start();
+    playing = true;
+  }
+}
+
+function draw() {
+  background(30);
+
+  var rate = map(mouseX, 0, width, 0.2, 20);
+  lfo.freq(rate);
+
+  fill(136, 170, 204);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(13);
+  text(playing ? 'Move mouse left / right' : 'Click to start', width / 2, height / 2 - 10);
+  textSize(11);
+  text('LFO rate: ' + rate.toFixed(1) + ' Hz', width / 2, height / 2 + 14);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="LFO tremolo preview"></iframe>
+    </div>
+  </div>
+
+  <h3>How it works</h3>
+  <p class="desc">
+    <code>lfo.disconnect()</code> stops the LFO from being sent to the speakers — you never want
+    to hear it directly. <code>osc.amp(lfo)</code> connects the LFO's output to the oscillator's
+    amplitude, where it is <strong>added</strong> to the base value of <code>0.5</code>. The LFO
+    swings between −0.2 and +0.2, so the square wave's amplitude ends up oscillating between
+    <strong>0.3 and 0.7</strong> — a gentle pulse that never cuts to silence. To make the effect
+    more dramatic, increase the LFO amplitude; to make it subtler, decrease it. At slow rates
+    (left) you hear a clear throb; at fast rates (right) it blurs into a buzzing texture.
+  </p>
+
+  <aside style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin:24px 0 0;font-size:13px;line-height:1.7;color:var(--text);">
+    <p style="margin:0 0 10px;font-weight:700;">Vibrato instead of tremolo</p>
+    <p style="margin:0 0 10px;">Aim the LFO at <strong>frequency</strong> instead of amplitude and you get <strong>vibrato</strong> — a pitch wobble rather than a volume pulse. Swap two lines:</p>
+    <pre style="margin:0;padding:12px 14px;font-size:12px;"><code>// vibrato — replace with these instead
+// lfo.amp(0.2);
+lfo.amp(10);   // depth in Hz — the pitch wobbles ±10 Hz
+
+// osc.amp(lfo);
+osc.freq(lfo); // modulates frequency, not amplitude</code></pre>
+    <p style="margin:10px 0 0;">The LFO output is added to the base frequency of 220 Hz, so the pitch moves between 210 and 230 Hz. Increase the LFO amplitude for a wider wobble, or speed up the rate for a more intense effect.</p>
+  </aside>
+
+  <h2>5. Shape notes with ADSR, reverb, and a low pass filter</h2>
   <p class="desc">
     This example combines everything: an oscillator shaped by an <strong>ADSR envelope</strong>,
     a <strong>low pass filter</strong> to control how bright or dull the tone is, and

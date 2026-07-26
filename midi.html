@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJW4BQ9MM6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KJW4BQ9MM6');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIDI (Experimental) — iHearYouCanCode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/docs.css">
+</head>
+<body class="docs-page">
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" title="Home" style="padding:5px 8px;font-size:18px;line-height:1;display:flex;align-items:center;">
+    <span class="material-symbols-outlined" style="font-size:20px;">home</span>
+  </a>
+  <span class="sep">·</span>
+  <a href="getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
+  <a href="effects.html">Effects</a>
+  <span class="sep">·</span>
+  <a href="midi.html" style="color:var(--accent);">MIDI</a>
+  <span class="sep">·</span>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
+</nav>
+
+<!-- ── Compact hero ── -->
+<div class="hero-compact">
+  <div class="hero-compact-inner">
+    <div class="hero-compact-left">
+      <div>
+        <div class="experimental-badge">Experimental</div>
+        <h1><span class="accent">MIDI</span> <span class="dim">Controllers</span></h1>
+        <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
+      </div>
+      <span class="hero-compact-sub">Connect hardware keyboards, pads, and knobs to trigger sounds and control parameters</span>
+    </div>
+    <a href="https://webmidijs.org/docs/" class="hero-compact-link" target="_blank" rel="noopener">↗ WEBMIDI.js Docs</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <h2>What is MIDI?</h2>
+  <p class="desc">
+    <strong>MIDI</strong> (Musical Instrument Digital Interface) is a protocol for sending musical
+    control data between devices — not audio itself, but instructions like
+    <em>"play middle C"</em>, <em>"release that note"</em>, or <em>"turn this knob to 75."</em>
+    Your keyboard, drum pad, or fader box sends these tiny messages; your code decides what
+    they mean musically.
+  </p>
+  <p class="desc">
+    The browser exposes MIDI through the low-level Web MIDI API. This tutorial uses
+    <a href="https://webmidijs.org/" target="_blank" rel="noopener"><strong>WEBMIDI.js v3</strong></a>,
+    which wraps that API with friendly methods like <code>addListener()</code>,
+    <code>playNote()</code>, and <code>sendControlChange()</code> so you can focus on making sound
+    instead of decoding binary messages.
+  </p>
+
+  <h2>1. Add these lines to your page</h2>
+  <p class="desc">
+    Everything runs in your web browser — nothing to install.
+    Copy these lines into your HTML file. Load them in this order: p5.js, p5.sound, ProControls,
+    then WEBMIDI.js.
+  </p>
+  <pre><code><span class="cmt">&lt;!-- Google icon font (optional — used by ProControls) --&gt;</span>
+<span class="kw">&lt;link</span> href=<span class="str">"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;display=block"</span> rel=<span class="str">"stylesheet"</span><span class="kw">&gt;</span>
+
+<span class="cmt">&lt;!-- p5.js --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/p5.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- p5.sound (requires p5.js above) --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- ProControls --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/gh/dstein-art/proControls4p5js@v0.8.3/ProControls.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- WEBMIDI.js v3 (IIFE build) --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/webmidi@3.1.14/dist/iife/webmidi.iife.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- Your sketch --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"sketch.js"</span><span class="kw">&gt;&lt;/script&gt;</span></code></pre>
+
+  <div class="note">
+    <strong>Secure origins only:</strong> Web MIDI only works on <code>https://</code>,
+    <code>localhost</code>, or <code>file://</code> pages. Use Chrome, Edge, or Opera, plug in a
+    MIDI controller (or virtual MIDI port), and allow access when the browser prompts you.
+  </div>
+
+  <h2>2. Enable MIDI and list your devices</h2>
+  <p class="desc">
+    Call <code>WebMidi.enable()</code> after a user click — the same gesture that unlocks audio
+    with <code>userStartAudio()</code>. In v3, <code>enable()</code> returns a promise.
+    Once enabled, <code>WebMidi.inputs</code> lists every connected input port (your keyboard,
+    pad controller, etc.).
+  </p>
+  <p class="desc">
+    Click the preview to enable MIDI. Device names are printed to the
+    <code>openConsolePanel()</code> — a ProControls panel that captures
+    <code>console.log()</code> output.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Connect a MIDI controller, then click the preview</div>
+      <textarea class="live-code" spellcheck="false">function setup() {
+  createCanvas(300, 300);
+  openConsolePanel();
+}
+
+function mousePressed() {
+  userStartAudio();
+  WebMidi.enable().then(function() {
+    console.log('Inputs: ' + WebMidi.inputs.length);
+    for (var i = 0; i < WebMidi.inputs.length; i++) {
+      console.log('  ' + i + ': ' + WebMidi.inputs[i].name);
+    }
+    console.log('Outputs: ' + WebMidi.outputs.length);
+    for (var i = 0; i < WebMidi.outputs.length; i++) {
+      console.log('  ' + i + ': ' + WebMidi.outputs[i].name);
+    }
+  });
+}
+
+function draw() {
+  proControlBackground();
+  fill(200); textAlign(CENTER, CENTER);
+  text('click to list devices', width / 2, height / 2);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="Enable MIDI preview"></iframe>
+    </div>
+  </div>
+
+  <h3>Pick a specific input</h3>
+  <p class="desc">
+    If you have multiple MIDI devices, grab one by name or index instead of listening on all of them:
+  </p>
+  <pre><code><span class="kw">var</span> input = WebMidi.<span class="fn">getInputByName</span>(<span class="str">"IAC Driver Bus 1"</span>);
+<span class="cmt">// or</span>
+<span class="kw">var</span> input = WebMidi.inputs[<span class="num">0</span>];</code></pre>
+
+  <h2>3. Trigger a synth with note on and note off</h2>
+  <p class="desc">
+    <code>noteon</code> starts a note; <code>noteoff</code> stops it.
+    Use <code>midiToFreq()</code> to turn the MIDI note number into a pitch.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Click preview, then play notes</div>
+      <textarea class="live-code" spellcheck="false">var osc;
+
+function setup() {
+  createCanvas(300, 300);
+  new IconButton({icon:'power_settings_new', mode:"state", onChange: powerPressed}, width / 2, height / 2);
+  osc = new p5.Oscillator('sine');
+  osc.amp(0);
+  osc.start();
+}
+
+function powerPressed() {
+  userStartAudio();
+  WebMidi.enable().then(function() {
+    var input = WebMidi.getInputByName('IAC Driver Bus 1');
+    input.addListener('noteon', function(e) {
+      osc.freq(midiToFreq(e.note.number));
+      osc.amp(0.5, 0.01);
+    });
+    input.addListener('noteoff', function() {
+      osc.amp(0, 0.1);
+    });
+  });
+}
+
+function draw() {
+  background(30);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="MIDI synth preview"></iframe>
+    </div>
+  </div>
+
+  <h2>4. Use velocity for dynamics</h2>
+  <p class="desc">
+    Velocity is how hard you press (0–127). In your <code>noteon</code> listener, map it to volume:
+  </p>
+  <pre><code>osc.<span class="fn">amp</span>(e.rawVelocity / <span class="num">127</span>, <span class="num">0.01</span>);</code></pre>
+
+  <h2>5. Map knobs with Control Change (CC)</h2>
+  <p class="desc">
+    Knobs and faders send <code>controlchange</code> messages.
+    CC 1 is usually the mod wheel. Use <code>e.rawValue</code> (0–127) to drive a parameter.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Move a knob or mod wheel on your controller</div>
+      <textarea class="live-code" spellcheck="false">var osc, filter;
+
+function setup() {
+  createCanvas(300, 300);
+  filter = new p5.LowPass();
+  osc = new p5.Oscillator('sawtooth');
+  osc.disconnect();
+  osc.connect(filter);
+  osc.amp(0.3);
+  osc.freq(110);
+  osc.start();
+}
+
+function mousePressed() {
+  userStartAudio();
+  WebMidi.enable().then(function() {
+    WebMidi.inputs[0].addListener('controlchange', function(e) {
+      filter.freq(map(e.rawValue, 0, 127, 200, 5000));
+    });
+  });
+}
+
+function draw() {
+  background(30);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="MIDI CC preview"></iframe>
+    </div>
+  </div>
+
+  <h3>Common CC numbers</h3>
+  <ul class="desc-list">
+    <li><strong>1</strong> — Mod wheel</li>
+    <li><strong>7</strong> — Volume</li>
+    <li><strong>74</strong> — Filter cutoff (on many controllers)</li>
+  </ul>
+  <p class="desc">
+    To listen for one CC only, check <code>e.controller.number</code> inside the listener.
+  </p>
+
+  <h2>6. Listen on a specific channel</h2>
+  <p class="desc">
+    Keys usually send on channel 1; drum pads often send on <strong>channel 10</strong>.
+    Use <code>input.channels[10]</code> to listen only on that channel.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="300">
+    <div class="live-editor">
+      <div class="live-hint">Hit drum pads on your controller</div>
+      <textarea class="live-code" spellcheck="false">var kick;
+
+function preload() {
+  kick = loadSound('/assets/superdirt/000_BD.wav');
+}
+
+function setup() {
+  createCanvas(300, 300);
+}
+
+function mousePressed() {
+  userStartAudio();
+  WebMidi.enable().then(function() {
+    WebMidi.inputs[0].channels[10].addListener('noteon', function() {
+      kick.play();
+    });
+  });
+}
+
+function draw() {
+  background(30);
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="example.html" width="300" height="300" scrolling="no" title="MIDI drum pads preview"></iframe>
+    </div>
+  </div>
+
+  <h2>7. Combine keys, pads, and knobs</h2>
+  <p class="desc">
+    Add the <code>{ channels: [1] }</code> option to a listener to target one channel.
+    Keys on channel 1 play a synth; pads on channel 10 trigger a sample.
+  </p>
+  <pre><code><span class="kw">var</span> input = WebMidi.inputs[<span class="num">0</span>];
+
+input.<span class="fn">addListener</span>(<span class="str">'noteon'</span>, <span class="kw">function</span>(e) {
+  osc.<span class="fn">freq</span>(<span class="fn">midiToFreq</span>(e.note.number));
+  osc.<span class="fn">amp</span>(<span class="num">0.5</span>);
+}, { channels: [<span class="num">1</span>] });
+
+input.<span class="fn">addListener</span>(<span class="str">'noteon'</span>, <span class="kw">function</span>() {
+  clap.<span class="fn">play</span>();
+}, { channels: [<span class="num">10</span>] });
+
+input.<span class="fn">addListener</span>(<span class="str">'controlchange'</span>, <span class="kw">function</span>(e) {
+  filter.<span class="fn">freq</span>(<span class="fn">map</span>(e.rawValue, <span class="num">0</span>, <span class="num">127</span>, <span class="num">300</span>, <span class="num">6000</span>));
+});</code></pre>
+
+  <div class="note">
+    <strong>Tip:</strong> For a full-screen test with your controller, copy any example into the
+    <a href="https://editor.p5js.org/" target="_blank" rel="noopener">p5.js Editor</a>
+    and add the WEBMIDI.js script tag from section 1.
+  </div>
+
+  <h3>Going further</h3>
+  <p class="desc">
+    WEBMIDI.js can also <strong>send</strong> MIDI — useful if you want your sketch to drive
+    external hardware. Check out <code>WebMidi.outputs</code>,
+    <code>output.playNote()</code>, and <code>output.sendControlChange()</code> in the
+    <a href="https://webmidijs.org/docs/getting-started/basics" target="_blank" rel="noopener">WEBMIDI.js basics guide</a>.
+    Combine MIDI input with the <a href="effects.html">Effects</a> and
+    <a href="samples.html">Samples</a> tutorials to build a full performance instrument.
+  </p>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a href="index.html" class="footer-brand">
+          <span class="footer-brand-accent">iHearYou</span><span class="footer-brand-dim">CanCode</span>
+        </a>
+        <p class="footer-copyright">&copy; 2026 David Stein</p>
+      </div>
+      <a href="mailto:davidstein@nyu.edu" class="footer-contact">davidstein@nyu.edu</a>
+    </div>
+    <div id="footer-production" class="footer-production" hidden>
+      <p class="footer-credit"></p>
+      <p class="footer-links"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/live-editor.js"></script>
+
+<script>
+  fetch('https://davidstein.us/shared/footer.json')
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('footer-production');
+      el.querySelector('.footer-credit').textContent = `${data.credit}…`;
+
+      const linksEl = el.querySelector('.footer-links');
+      data.links.forEach((link, i) => {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'sep';
+          sep.textContent = '·';
+          linksEl.appendChild(sep);
+        }
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.textContent = link.label;
+        linksEl.appendChild(a);
+      });
+
+      el.hidden = false;
+    })
+    .catch(() => {});
+</script>
+
+</body>
+</html>
