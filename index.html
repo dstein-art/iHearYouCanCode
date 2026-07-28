@@ -36,6 +36,16 @@
   <span class="sep">·</span>
   <a href="midi.html">MIDI</a>
   <span class="sep">·</span>
+  <div class="nav-dropdown">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+      Resources
+      <span class="material-symbols-outlined nav-dropdown-chevron">expand_more</span>
+    </button>
+    <div class="nav-dropdown-menu" role="menu">
+      <a href="superdirt.html" role="menuitem">SuperDirt</a>
+    </div>
+  </div>
+  <span class="sep">·</span>
   <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
@@ -132,6 +142,25 @@
     </div>
   </div>
 
+  <div class="section-tag" style="margin-top:56px;">Resources</div>
+  <h2 class="section-heading">Sample libraries</h2>
+  <p class="section-desc">
+    Reference collections you can browse and pull URLs from for use in your sketches.
+  </p>
+
+  <div class="col-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+    <div class="col-card">
+      <div class="col-card-header">
+        <h3>SuperDirt Sample Library</h3>
+        <p>Browse, preview, and copy URLs from the classic Dirt-Samples collection used by TidalCycles live coding.</p>
+      </div>
+      <div class="col-card-preview">
+        <span class="material-symbols-outlined">library_music</span>
+      </div>
+      <div class="col-card-footer"><a href="superdirt.html">Browse samples →</a></div>
+    </div>
+  </div>
+
   <!--
   <div class="col-card">
     <div class="col-card-header">
@@ -195,6 +224,8 @@
     </div>
   </div>
 </footer>
+
+<script src="js/nav.js"></script>
 
 <script>
   fetch('https://davidstein.us/shared/footer.json')

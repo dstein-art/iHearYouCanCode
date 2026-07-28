@@ -37,6 +37,16 @@
   <span class="sep">·</span>
   <a href="midi.html">MIDI</a>
   <span class="sep">·</span>
+  <div class="nav-dropdown">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+      Resources
+      <span class="material-symbols-outlined nav-dropdown-chevron">expand_more</span>
+    </button>
+    <div class="nav-dropdown-menu" role="menu">
+      <a href="superdirt.html" role="menuitem">SuperDirt</a>
+    </div>
+  </div>
+  <span class="sep">·</span>
   <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
@@ -423,8 +433,8 @@ function draw() {
     <p style="margin:0 0 12px;font-weight:700;color:var(--text);">💡 Looking for sounds to play with?</p>
     <ul style="margin:0;padding:0 0 0 1.2em;display:flex;flex-direction:column;gap:8px;">
       <li>
-        <strong>Dirt Samples</strong> — part of the SuperDirt project. Dave has a public bucket on Amazon you can browse:
-        <a href="https://publicbucket2share.s3.amazonaws.com/Dirt-Samples/index.html" target="_blank" rel="noopener" style="color:var(--accent);">Dirt Samples index</a>
+        <strong>Dirt Samples</strong> — part of the SuperDirt project. Browse the full collection, preview files, and copy URLs on the
+        <a href="superdirt.html" style="color:var(--accent);">SuperDirt Sample Library</a> page.
       </li>
       <li>
         <strong>Free Music Archive (FMA)</strong> — free, open-licensed music by independent artists worldwide:
@@ -468,6 +478,7 @@ function draw() {
   </div>
 </footer>
 
+<script src="js/nav.js"></script>
 <script src="js/live-editor.js"></script>
 
 <script>

@@ -37,6 +37,16 @@
   <span class="sep">·</span>
   <a href="midi.html">MIDI</a>
   <span class="sep">·</span>
+  <div class="nav-dropdown">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+      Resources
+      <span class="material-symbols-outlined nav-dropdown-chevron">expand_more</span>
+    </button>
+    <div class="nav-dropdown-menu" role="menu">
+      <a href="superdirt.html" role="menuitem">SuperDirt</a>
+    </div>
+  </div>
+  <span class="sep">·</span>
   <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
 </nav>
 
@@ -82,9 +92,9 @@
     <em>build</em> complex sounds by stacking simple ones — which is exactly what a synthesizer does.
   </p>
   <div class="note">
-    <strong>Try it:</strong> the
+    <strong>Try it:</strong>
     <a href="https://teropa.info/harmonics-explorer/" target="_blank" rel="noopener">Harmonics Explorer</a>
-    lets you add and remove sine wave harmonics and hear how they combine into more complex
+    by <strong>Tero Parviainen</strong> lets you add and remove sine wave harmonics and hear how they combine into more complex
     waveforms in real time — a great way to see Fourier's idea in action before writing any code.
   </div>
 
@@ -504,6 +514,7 @@ function draw() {
   </div>
 </footer>
 
+<script src="js/nav.js"></script>
 <script src="js/live-editor.js"></script>
 
 <script>

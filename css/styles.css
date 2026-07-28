@@ -63,6 +63,87 @@ nav a:hover {
 
 nav .sep { color: var(--border); margin: 0 2px; user-select: none; }
 
+/* ── Nav dropdown ── */
+.nav-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nav-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font: 500 13px/1 'Inter', 'Segoe UI', system-ui, sans-serif;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown.is-open .nav-dropdown-toggle {
+  color: var(--accent);
+  border-color: #0077cc44;
+  background: #0077cc0a;
+}
+
+.nav-dropdown-toggle.is-active {
+  color: var(--accent);
+}
+
+.nav-dropdown-chevron {
+  font-size: 16px;
+  transition: transform .15s;
+}
+
+.nav-dropdown.is-open .nav-dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 160px;
+  padding: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+}
+
+.nav-dropdown.is-open .nav-dropdown-menu {
+  display: block;
+}
+
+.nav-dropdown-menu a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: color .15s, background .15s;
+}
+
+.nav-dropdown-menu a:hover {
+  color: var(--accent);
+  background: #0077cc0a;
+  border-color: transparent;
+}
+
+.nav-dropdown-menu a.is-active {
+  color: var(--accent);
+  background: #0077cc12;
+}
+
 /* ── Hero ── */
 .hero {
   background: linear-gradient(135deg, #0f1923 0%, #1a2840 50%, #0f2030 100%);

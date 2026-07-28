@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJW4BQ9MM6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KJW4BQ9MM6');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperDirt Sample Library — iHearYouCanCode</title>
+  <meta name="description" content="Browse and preview the Dirt-Samples collection used by SuperDirt and TidalCycles. Copy hosted URLs for your p5.js sketches and live coding projects.">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/docs.css">
+  <link rel="stylesheet" href="css/superdirt.css">
+</head>
+<body class="docs-page superdirt-page">
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" title="Home" style="padding:5px 8px;font-size:18px;line-height:1;display:flex;align-items:center;">
+    <span class="material-symbols-outlined" style="font-size:20px;">home</span>
+  </a>
+  <span class="sep">·</span>
+  <a href="getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
+  <a href="effects.html">Effects</a>
+  <span class="sep">·</span>
+  <a href="midi.html">MIDI</a>
+  <span class="sep">·</span>
+  <div class="nav-dropdown">
+    <button type="button" class="nav-dropdown-toggle is-active" aria-expanded="false" aria-haspopup="true">
+      Resources
+      <span class="material-symbols-outlined nav-dropdown-chevron">expand_more</span>
+    </button>
+    <div class="nav-dropdown-menu" role="menu">
+      <a href="superdirt.html" role="menuitem" class="is-active">SuperDirt</a>
+    </div>
+  </div>
+  <span class="sep">·</span>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
+</nav>
+
+<!-- ── Compact hero ── -->
+<div class="hero-compact">
+  <div class="hero-compact-inner">
+    <div class="hero-compact-left">
+      <div>
+        <h1><span class="accent">SuperDirt</span> <span class="dim">Sample Library</span></h1>
+        <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
+      </div>
+      <span class="hero-compact-sub">Browse, preview, and copy URLs from the classic Dirt-Samples collection</span>
+    </div>
+    <a href="https://codeberg.org/musikinformatik/SuperDirt" class="hero-compact-link" target="_blank" rel="noopener">↗ SuperDirt on Codeberg</a>
+  </div>
+</div>
+
+<div class="superdirt-layout">
+
+  <aside class="superdirt-sidebar">
+    <div class="superdirt-sidebar-title">On this page</div>
+    <ul class="superdirt-sidebar-list">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#browse">Browse Samples</a></li>
+    </ul>
+
+    <div class="superdirt-sidebar-title">Categories</div>
+    <ul class="superdirt-sidebar-list" id="superdirt-sidebar-cats">
+      <li><span class="superdirt-intro" style="font-size:12px;padding:6px 10px;">Loading…</span></li>
+    </ul>
+  </aside>
+
+  <main class="superdirt-content">
+
+    <section class="superdirt-section" id="overview">
+      <p class="superdirt-intro">
+        <strong>SuperDirt</strong> is the SuperCollider audio engine behind TidalCycles. It loads short audio files from named folders (like <code>bd</code>, <code>hh</code>, or <code>808bd</code>) and triggers them on demand over Open Sound Control. The samples listed here are hosted for direct browser access — preview them inline or copy a URL into your own project.
+      </p>
+
+      <div class="note superdirt-credit">
+        <strong>Credit · SuperDirt project</strong><br>
+        Sample folders originate from the <strong>Dirt-Samples</strong> collection bundled with the SuperDirt ecosystem. SuperDirt is free software maintained by Julian Rohrhuber, Alex McLean, and contributors.
+        <br><br>
+        The audio files listed here are hosted on <strong>David Stein's Amazon S3 bucket</strong> for preview and experimentation. If you are using these samples in a distributed or public-facing project, please upload the sound files to your own server rather than linking directly to this hosting.
+        <div class="superdirt-credit-links">
+          <a href="https://codeberg.org/musikinformatik/SuperDirt" target="_blank" rel="noopener">
+            <span class="material-symbols-outlined">code</span> SuperDirt on Codeberg
+          </a>
+          <a href="https://tidalcycles.org/" target="_blank" rel="noopener">
+            <span class="material-symbols-outlined">music_note</span> TidalCycles
+          </a>
+        </div>
+      </div>
+
+      <div class="superdirt-stats">
+        <div class="superdirt-stat">
+          <div class="superdirt-stat-value" id="stat-folders">—</div>
+          <div class="superdirt-stat-label">Sample folders</div>
+        </div>
+        <div class="superdirt-stat">
+          <div class="superdirt-stat-value" id="stat-files">—</div>
+          <div class="superdirt-stat-label">Audio files</div>
+        </div>
+        <div class="superdirt-stat">
+          <div class="superdirt-stat-value" id="stat-categories">—</div>
+          <div class="superdirt-stat-label">Categories</div>
+        </div>
+      </div>
+
+      <p class="superdirt-intro">
+        Folders are grouped by role — drum machines, breakbeats, bass, synths, vocals, FX, and more. Expand any folder to preview individual files or copy a direct URL. Use copied URLs with <code>loadSound()</code> in the <a href="samples.html">Samples tutorial</a>.
+      </p>
+    </section>
+
+    <section class="superdirt-section" id="browse">
+      <h2>Browse Samples</h2>
+
+      <div class="superdirt-toolbar">
+        <div class="superdirt-search-wrap">
+          <span class="material-symbols-outlined">search</span>
+          <input type="search" id="superdirt-search" placeholder="Search folders or filenames (e.g. 808, bd, speech)…" autocomplete="off" spellcheck="false">
+        </div>
+        <span class="superdirt-filter-hint" id="superdirt-filter-hint">Loading…</span>
+      </div>
+
+      <div id="superdirt-main"></div>
+
+      <div class="superdirt-empty" id="superdirt-empty">
+        No samples matched your search. Try a shorter keyword like <code>bd</code>, <code>hh</code>, or <code>808</code>.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a href="index.html" class="footer-brand">
+          <span class="footer-brand-accent">iHearYou</span><span class="footer-brand-dim">CanCode</span>
+        </a>
+        <p class="footer-copyright">&copy; 2026 David Stein</p>
+      </div>
+      <a href="mailto:davidstein@nyu.edu" class="footer-contact">davidstein@nyu.edu</a>
+    </div>
+    <div id="footer-production" class="footer-production" hidden>
+      <p class="footer-credit"></p>
+      <p class="footer-links"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+<script src="js/superdirt.js"></script>
+
+<script>
+  fetch('https://davidstein.us/shared/footer.json')
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('footer-production');
+      el.querySelector('.footer-credit').textContent = `${data.credit}…`;
+
+      const linksEl = el.querySelector('.footer-links');
+      data.links.forEach((link, i) => {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'sep';
+          sep.textContent = '·';
+          linksEl.appendChild(sep);
+        }
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.textContent = link.label;
+        linksEl.appendChild(a);
+      });
+
+      el.hidden = false;
+    })
+    .catch(() => {});
+</script>
+
+</body>
+</html>
