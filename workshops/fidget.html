@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJW4BQ9MM6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KJW4BQ9MM6');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fidget Camp Workshop 2026 — iHearYouCanCode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/docs.css">
+</head>
+<body class="docs-page">
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="../index.html" title="Home" style="padding:5px 8px;font-size:18px;line-height:1;display:flex;align-items:center;">
+    <span class="material-symbols-outlined" style="font-size:20px;">home</span>
+  </a>
+  <span class="sep">·</span>
+  <a href="../getting-started.html">Getting Started</a>
+  <span class="sep">·</span>
+  <a href="../oscillators.html">Oscillators</a>
+  <span class="sep">·</span>
+  <a href="../samples.html">Samples</a>
+  <span class="sep">·</span>
+  <a href="../audioAnalysis.html">Analysis</a>
+  <span class="sep">·</span>
+  <a href="../effects.html">Effects</a>
+  <span class="sep">·</span>
+  <a href="../midi.html">MIDI</a>
+  <span class="sep">·</span>
+  <div class="nav-dropdown">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+      Resources
+      <span class="material-symbols-outlined nav-dropdown-chevron">expand_more</span>
+    </button>
+    <div class="nav-dropdown-menu" role="menu">
+      <a href="../superdirt.html" role="menuitem">SuperDirt</a>
+    </div>
+  </div>
+  <span class="sep">·</span>
+  <a href="https://procontrols.org" target="_blank" rel="noopener">ProControls ↗</a>
+</nav>
+
+<!-- ── Compact hero ── -->
+<div class="hero-compact">
+  <div class="hero-compact-inner">
+    <div class="hero-compact-left">
+      <div>
+        <h1><span class="accent">Fidget Camp</span> <span class="dim">Workshop 2026</span></h1>
+        <div class="hero-compact-eyebrow">iHearYouCanCode — by David Stein</div>
+      </div>
+      <span class="hero-compact-sub">Set up your tools, then make your first beep in the browser</span>
+    </div>
+    <a href="https://p5js.org/reference/p5.sound/" class="hero-compact-link" target="_blank" rel="noopener">↗ p5.sound Docs</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <h2>1. Getting Started</h2>
+  <p class="desc">
+    Everything on this site runs in your web browser — nothing to install.
+    Copy these lines into your <b>index.html</b> file. Load them in this order: p5.js first, then p5.sound, then ProControls.
+  </p>
+  <pre><code><span class="cmt">&lt;!-- Google icon font (optional — used by ProControls) --&gt;</span>
+<span class="kw">&lt;link</span> href=<span class="str">"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;display=block"</span> rel=<span class="str">"stylesheet"</span><span class="kw">&gt;</span>
+
+<span class="cmt">&lt;!-- p5.js --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/p5.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- p5.sound (requires p5.js above) --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/npm/p5@1.11.13/lib/addons/p5.sound.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- ProControls — needed for section 3 --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdn.jsdelivr.net/gh/dstein-art/proControls4p5js@v0.8.3/ProControls.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- Your sketch --&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"sketch.js"</span><span class="kw">&gt;&lt;/script&gt;</span></code></pre>
+
+  <div class="note">
+    <strong>Want a shortcut?</strong>
+    We made a p5.js Editor template with everything already set up.
+    Log in, open the template, and click Duplicate to save your own copy.
+    <a href="https://editor.p5js.org/davidstein/sketches/kofO5WQrG" target="_blank" rel="noopener">Open template</a>.
+  </div>
+
+
+
+  <h2>2. Add a slider control</h2>
+  <p class="desc">
+    ProControls gives you an <code>AnalogSlider</code> — a vertical fader you drag up and down.
+    With no parameters, it appears with default settings: range 0 to 1, auto-placed on the canvas.
+    Call <code>proControlBackground()</code> in <code>draw()</code> to draw the panel behind it.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Try dragging the slider</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+
+function setup() {
+  createCanvas(300, 400);
+  new AnalogSlider();
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="AnalogSlider preview"></iframe>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong><a href="https://editor.p5js.org/davidstein/sketches/8Vd8z6SuZ" target="_blank" rel="noopener">See the above example in the p5.js Editor</a></strong>
+  </div>
+
+  <p class="desc" style="margin-top:28px;">
+    You can also change the slider's starting parameters. Set your own position with
+    <code>x</code> and <code>y</code>, size with <code>width</code> and <code>height</code>,
+    range with <code>min</code> and <code>max</code>, and the starting position of the fader with
+    <code>value</code>.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Try changing x, y, width, height, min, max, or value</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+
+function setup() {
+  createCanvas(300, 400);
+  new AnalogSlider({
+    x: 40,
+    y: 30,
+    width: 50,
+    height: 200,
+    min: 0,
+    max: 100,
+    value: 75,
+  });
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="AnalogSlider positioned preview"></iframe>
+    </div>
+  </div>
+
+
+  <h2>3. Group your controls with a panel</h2>
+  <p class="desc">
+    A <code>Panel</code> groups controls into a labeled box you can move around the canvas.
+    Create a panel, then call <code>panel.add()</code> to drop in a slider and knobs — ProControls
+    lays them out inside the panel for you.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Drag the panel title bar to move it</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+
+function setup() {
+  createCanvas(300, 400);
+
+  let panel = new Panel({
+    x: 15,
+    y: 15,
+    width: 270,
+    height: 270,
+    label: 'SYNTH',
+  });
+
+  panel.add(new AnalogSlider({ label: 'VOL' }));
+  panel.add(new Dial({ label: 'FREQ' }));
+  panel.add(new Dial({ label: 'DETUNE' }));
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="Panel with slider and knobs preview"></iframe>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong><a href="https://editor.p5js.org/davidstein/sketches/01q_2v5rU" target="_blank" rel="noopener">See the above example in the p5.js Editor</a></strong>
+  </div>
+
+
+  <h2>4. React when the data changes</h2>
+  <p class="desc">
+    Wire the panel's <code>onChange</code> callback to run whenever a slider or knob moves.
+    ProControls passes a <code>data</code> object with the current values from every control in the panel.
+    Call <code>openConsolePanel()</code> to open a console window on the canvas — then
+    <code>console.log()</code> inside your callback shows up there as you drag controls.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Move a control and watch the console panel</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+
+function synthDataChange(data) {
+  console.log(data);
+}
+
+function setup() {
+  createCanvas(300, 400);
+  openConsolePanel();
+
+  let panel = new Panel({
+    x: 15,
+    y: 15,
+    width: 270,
+    height: 270,
+    label: 'SYNTH',
+    onChange: synthDataChange,
+  });
+
+  panel.add(new AnalogSlider({ label: 'VOL' }));
+  panel.add(new Dial({ label: 'FREQ' }));
+  panel.add(new Dial({ label: 'DETUNE' }));
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="Panel onChange preview"></iframe>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong><a href="https://editor.p5js.org/davidstein/sketches/Faj4Y10Rg" target="_blank" rel="noopener">See the above example in the p5.js Editor</a></strong>
+  </div>
+
+
+  <h2>5. Make your first sound</h2>
+  <p class="desc">
+    A <code>p5.Oscillator</code> generates a steady tone. Here an <code>IconButton</code> with a
+    <code>radio_button_checked</code> icon toggles the sound on and off — click once to start,
+    click again to stop. Call <code>userStartAudio()</code> on the first click so the browser allows sound.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Click the button to turn sound on and off</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+var osc;
+
+function toggleSound(aData, btn) {
+  userStartAudio();
+  if (btn.state) {
+    osc.start();
+    osc.amp(0.5);
+  } else {
+    osc.stop();
+  }
+}
+
+function setup() {
+  createCanvas(300, 400);
+  osc = new p5.Oscillator('sine');
+  osc.amp(0);
+  osc.freq(440);
+
+  new IconButton({
+    x: 10,
+    y: 10,
+    icon: 'radio_button_checked',
+    toggle: true,
+    onClick: toggleSound,
+  });
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="IconButton sound toggle preview"></iframe>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong><a href="https://editor.p5js.org/davidstein/sketches/O2wOE7jGw" target="_blank" rel="noopener">See the above example in the p5.js Editor</a></strong>
+  </div>
+
+  <h3>Why do I need to click first?</h3>
+  <p class="desc">
+    Browsers won't play sound until you click something — it's a safety rule.
+    The button calls <code>userStartAudio()</code> for you the first time you press it.
+  </p>
+
+  <h2>6. Add a second sound, white noise</h2>
+  <p class="desc">
+    Layer a second sound source with <code>p5.Noise('white')</code> — a hissy burst of random samples.
+    Update your toggle function so the button starts and stops both the oscillator and the noise together.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Click the button to turn both sounds on and off</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+var sound1;
+var sound2;
+
+function toggleSound(aData, btn) {
+  userStartAudio();
+  if (btn.state) {
+    sound1.start();
+    sound1.amp(0.5);
+    sound2.start();
+    sound2.amp(0.2);
+  } else {
+    sound1.stop();
+    sound2.stop();
+  }
+}
+
+function setup() {
+  createCanvas(300, 400);
+  sound1 = new p5.Oscillator('sine');
+  sound1.amp(0);
+  sound1.freq(440);
+
+  sound2 = new p5.Noise('white');
+  sound2.amp(0);
+
+  new IconButton({
+    x: 10,
+    y: 10,
+    icon: 'radio_button_checked',
+    toggle: true,
+    onClick: toggleSound,
+  });
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="Oscillator and white noise preview"></iframe>
+    </div>
+  </div>
+
+  <p class="desc" style="margin-top:28px;">
+    Put both sliders on a <code>Panel</code> and wire <code>onChange: dataChange</code> — one callback updates
+    both <code>sound1.amp()</code> and <code>sound2.amp()</code> from the panel's data object.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Turn sound on, then drag the sliders</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+var sound1;
+var sound2;
+
+function dataChange(data) {
+  sound1.amp(data.osc);
+  sound2.amp(data.noise);
+}
+
+function toggleSound(aData, btn) {
+  userStartAudio();
+  if (btn.state) {
+    sound1.start();
+    sound2.start();
+  } else {
+    sound1.stop();
+    sound2.stop();
+  }
+}
+
+function setup() {
+  createCanvas(300, 400);
+  sound1 = new p5.Oscillator('sine');
+  sound1.amp(0);
+  sound1.freq(440);
+  sound2 = new p5.Noise('white');
+  sound2.amp(0);
+
+  new IconButton({
+    x: 10, y: 10,
+    icon: 'radio_button_checked',
+    toggle: true,
+    onClick: toggleSound,
+  });
+
+  let panel = new Panel({ label: 'LEVELS', x:10, y:50, width:260,height:300, onChange: dataChange });
+  panel.add(new AnalogSlider({label:"osc"}));
+  panel.add(new AnalogSlider({label:"noise"}));
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="Sliders control tone and noise preview"></iframe>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong><a href="https://editor.p5js.org/davidstein/sketches/9sTJtlA0R" target="_blank" rel="noopener">See the above example in the p5.js Editor</a></strong>
+  </div>
+
+  <h2>7. Add a XYPad to control the oscillator</h2>
+  <p class="desc">
+    Swap the oscillator slider for an <code>XYPad</code> — drag left and right to change
+    <code>sound1.freq()</code>, up and down to change <code>sound1.amp()</code>. The noise slider stays on the panel.
+  </p>
+
+  <div class="example-row" data-canvas-w="300" data-canvas-h="400">
+    <div class="live-editor">
+      <div class="live-hint">Turn sound on, then drag the pad and slider</div>
+      <textarea class="live-code" spellcheck="false">ControlStyle = 'white';
+var sound1;
+var sound2;
+
+function dataChange(data) {
+  sound1.freq(data.osc.x);
+  sound1.amp(data.osc.y);
+  sound2.amp(data.noise);
+}
+
+function toggleSound(aData, btn) {
+  userStartAudio();
+  if (btn.state) {
+    sound1.start();
+    sound2.start();
+  } else {
+    sound1.stop();
+    sound2.stop();
+  }
+}
+
+function setup() {
+  createCanvas(300, 400);
+  sound1 = new p5.Oscillator('sine');
+  sound1.amp(0);
+  sound1.freq(440);
+  sound2 = new p5.Noise('white');
+  sound2.amp(0);
+
+  new IconButton({
+    x: 10, y: 10,
+    icon: 'radio_button_checked',
+    toggle: true,
+    onClick: toggleSound,
+  });
+
+  let panel = new Panel({ label: 'LEVELS', x: 10, y: 50, width: 260, height: 300, onChange: dataChange });
+  panel.add(new XYPad({ label: 'osc', minX: 50, maxX: 500, minY: 0, maxY: 1, springBack: true, springDuration: 5 }));
+  panel.add(new AnalogSlider({ label: 'noise' }));
+}
+
+function draw() {
+  proControlBackground();
+}</textarea>
+    </div>
+    <div class="example-preview">
+      <iframe class="example-frame" src="../example.html" width="300" height="400" scrolling="no" title="XYPad controls oscillator preview"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a href="../index.html" class="footer-brand">
+          <span class="footer-brand-accent">iHearYou</span><span class="footer-brand-dim">CanCode</span>
+        </a>
+        <p class="footer-copyright">&copy; 2026 David Stein</p>
+      </div>
+      <a href="mailto:davidstein@nyu.edu" class="footer-contact">davidstein@nyu.edu</a>
+    </div>
+    <div id="footer-production" class="footer-production" hidden>
+      <p class="footer-credit"></p>
+      <p class="footer-links"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script src="../js/live-editor.js"></script>
+
+<script>
+  fetch('https://davidstein.us/shared/footer.json')
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('footer-production');
+      el.querySelector('.footer-credit').textContent = `${data.credit}…`;
+
+      const linksEl = el.querySelector('.footer-links');
+      data.links.forEach((link, i) => {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'sep';
+          sep.textContent = '·';
+          linksEl.appendChild(sep);
+        }
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.textContent = link.label;
+        linksEl.appendChild(a);
+      });
+
+      el.hidden = false;
+    })
+    .catch(() => {});
+</script>
+
+</body>
+</html>
